@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CampVibes España - Tu Acampada Veraniega</title>
+    <title>CampVibes Es - Tu Acampada Veraniega</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -86,74 +86,95 @@
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-2 cursor-pointer" onclick="app.changeTab('home')">
                 <span class="text-2xl">⛺</span>
-                <h1 class="text-xl font-black bg-gradient-to-r from-marDark to-teal-500 bg-clip-text text-transparent tracking-tight">CampVibes</h1>
+                <h1 class="text-xl font-black bg-gradient-to-r from-marDark to-teal-500 bg-clip-text text-transparent tracking-tight">CampVibes ES</h1>
             </div>
             
             <nav class="flex items-center gap-6 font-medium text-sm">
                 <button id="nav-home" onclick="app.changeTab('home')" class="text-marDark border-b-2 border-marDark pb-1 px-1 transition-all">Explorar</button>
                 <button id="nav-favs" onclick="app.changeTab('favorites')" class="text-slate-500 hover:text-fomoCoral pb-1 px-1 transition-all flex items-center gap-1">
-                    Mis Favoritos <i class="fa-solid fa-heart text-xs text-fomoCoral"></i>
+                    Favs <i class="fa-solid fa-heart text-xs text-fomoCoral"></i>
                 </button>
             </nav>
 
             <div id="telegram-profile-container" class="flex items-center gap-3">
-                </div>
+            </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 mt-6">
+    <main class="max-w-7xl mx-auto px-4 mt-4">
         
-        <div id="view-home" class="space-y-8">
-            <section class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div class="relative md:col-span-1">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
-                        <input type="text" id="search-input" oninput="app.filterCampings()" placeholder="¿Dónde quieres acampar hoy?..." class="w-full pl-11 pr-4 py-3 bg-slate-50 rounded-2xl border-none focus:outline-none focus:ring-2 focus:ring-marDark text-sm">
-                    </div>
-                    <div class="flex gap-2 items-center overflow-x-auto md:col-span-2">
-                        <button onclick="app.toggleTypeFilter('todos')" id="btn-type-todos" class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-marDark text-white shadow-sm shadow-marDark/20 whitespace-nowrap">☀️ Todos</button>
-                        <button onclick="app.toggleTypeFilter('parcela')" id="btn-type-parcela" class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">🔲 Parcelas</button>
-                        <button onclick="app.toggleTypeFilter('bungalow')" id="btn-type-bungalow" class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">🏡 Bungalows</button>
-                        <button onclick="app.toggleTypeFilter('cabana')" id="btn-type-cabana" class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">🪵 Cabañas</button>
-                    </div>
+        <div id="view-home" class="space-y-6">
+            <section class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-2 flex-wrap md:flex-nowrap">
+                <div class="relative flex-1 min-w-[200px]">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                    <input type="text" id="search-input" oninput="app.filterCampings()" placeholder="Buscar camping..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-marDark text-xs">
                 </div>
-                <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-3 items-center text-xs text-slate-500">
-                    <span class="font-bold"><i class="fa-solid fa-sliders mr-1"></i> Filtros avanzados:</span>
-                    <label class="flex items-center gap-1 cursor-pointer bg-slate-50 px-3 py-1.5 rounded-lg hover:bg-slate-100">
-                        <input type="checkbox" id="filter-wc" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark"> 🚾 Baños Premium
-                    </label>
-                    <label class="flex items-center gap-1 cursor-pointer bg-slate-50 px-3 py-1.5 rounded-lg hover:bg-slate-100">
-                        <input type="checkbox" id="filter-piscina" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark"> 🏊 Piscina
-                    </label>
-                    <label class="flex items-center gap-1 cursor-pointer bg-slate-50 px-3 py-1.5 rounded-lg hover:bg-slate-100">
-                        <input type="checkbox" id="filter-oferta" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark"> 🏷️ En Oferta
-                    </label>
-                    <button onclick="app.clearFilters()" class="ml-auto text-marDark hover:underline font-bold text-[11px]">Limpiar Filtros</button>
+                
+                <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
+                    <select id="category-select" onchange="app.toggleTypeFilter(this.value)" class="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer px-2 py-1">
+                        <option value="todos">☀️ Todos</option>
+                        <option value="parcela">🔲 Parcelas</option>
+                        <option value="bungalow">🏡 Bungalows</option>
+                        <option value="cabana">🪵 Cabañas</option>
+                    </select>
+                </div>
+
+                <button onclick="app.toggleFilterModal(true)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+                    <i class="fa-solid fa-sliders text-xs"></i> Filtrar
+                </button>
+                
+                <button onclick="app.clearFilters()" class="text-marDark hover:underline font-bold text-[11px] ml-auto md:ml-0 px-2">Limpiar</button>
+            </section>
+
+            <div id="filter-modal" class="fixed inset-0 z-50 glass-modal flex items-center justify-center p-4 hidden">
+                <div class="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl p-5 space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-sliders text-marDark"></i> Filtros Avanzados</h3>
+                        <button onclick="app.toggleFilterModal(false)" class="w-6 h-6 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-full text-xs font-bold">×</button>
+                    </div>
+                    <div class="flex flex-col gap-3 text-xs text-slate-600">
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-wc" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🚾 Baños Premium
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-piscina" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🏊 Piscina
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-oferta" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🏷️ En Oferta
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-mascotas" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🐾 Acepta Mascotas
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-ninos" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 👶 Recomendado para Niños
+                        </label>
+                    </div>
+                    <button onclick="app.toggleFilterModal(false)" class="w-full py-2 bg-marDark text-white text-xs font-bold rounded-xl shadow-md shadow-marDark/20">Aplicar Filtros</button>
+                </div>
+            </div>
+
+            <section>
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-lg">🔥</span>
+                    <h2 class="text-base font-extrabold text-slate-800 tracking-tight">Joyas del Verano Destacadas</h2>
+                </div>
+                <div id="featured-carousel" class="flex gap-4 overflow-x-auto pb-2 snap-x scroll-smooth">
                 </div>
             </section>
 
             <section>
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="text-xl">🔥</span>
-                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Joyas del Verano Destacadas</h2>
-                </div>
-                <div id="featured-carousel" class="flex gap-6 overflow-x-auto pb-4 snap-x scroll-smooth">
-                    </div>
-            </section>
-
-            <section>
-                <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
-                        <span class="text-xl">⛺</span>
-                        <h2 id="grid-title" class="text-xl font-extrabold text-slate-800 tracking-tight">Campings en España</h2>
+                        <span class="text-lg">⛺</span>
+                        <h2 id="grid-title" class="text-base font-extrabold text-slate-800 tracking-tight">Campings en España</h2>
                     </div>
-                    <span id="results-count" class="text-xs bg-slate-100 font-bold px-3 py-1.5 rounded-full text-slate-500"></span>
+                    <span id="results-count" class="text-[11px] bg-slate-100 font-bold px-2.5 py-1 rounded-full text-slate-500"></span>
                 </div>
-                <div id="campings-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    </div>
-                <div class="flex justify-center mt-12" id="lazy-load-container">
-                    <button onclick="app.loadMore()" class="px-8 py-3.5 bg-white text-slate-700 font-bold text-sm rounded-2xl shadow-sm border border-slate-200/60 hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-2">
-                        Cargar más campings <i class="fa-solid fa-chevron-down text-xs"></i>
+                <div id="campings-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                </div>
+                <div class="flex justify-center mt-8" id="lazy-load-container">
+                    <button onclick="app.loadMore()" class="px-6 py-2.5 bg-white text-slate-700 font-bold text-xs rounded-xl shadow-sm border border-slate-200/60 hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-2">
+                        Cargar más campings <i class="fa-solid fa-chevron-down text-[10px]"></i>
                     </button>
                 </div>
             </section>
@@ -164,8 +185,8 @@
                 <span class="text-2xl text-fomoCoral">❤️</span>
                 <h2 class="text-2xl font-black text-slate-900 tracking-tight">Tus Campings Guardados</h2>
             </div>
-            <div id="favs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                </div>
+            <div id="favs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
             <div id="favs-empty-state" class="hidden text-center py-16 space-y-4">
                 <span class="text-5xl block">🌊</span>
                 <p class="text-slate-500 font-medium">Aún no tienes campings guardados para tus vacaciones.</p>
@@ -183,10 +204,18 @@
         <div class="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl flex flex-col relative max-h-[90vh]">
             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                 <h3 id="maps-modal-title" class="font-bold text-slate-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-map-location-dot text-marDark"></i> Cómo llegar</h3>
-                <button onclick="app.closeMaps()" class="w-8 h-8 flex items-center justify-center bg-slate-200/60 hover:bg-slate-200 text-slate-600 rounded-full text-xs font-bold transition-all">&times;</button>
+                <button onclick="app.closeMaps()" class="w-8 h-8 flex items-center justify-center bg-slate-200/60 hover:bg-slate-200 text-slate-600 rounded-full text-xs font-bold transition-all">×</button>
             </div>
             <div class="w-full aspect-video bg-slate-100" id="maps-iframe-container">
-                </div>
+            </div>
+            <div class="p-3 bg-slate-50 border-t border-slate-100 flex gap-2 justify-end">
+                <button id="btn-copy-coords" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1">
+                    <i class="fa-regular fa-copy"></i> Copiar Dirección
+                </button>
+                <button id="btn-open-gmaps" class="px-3 py-1.5 bg-marDark text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1 shadow-sm">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Google Maps
+                </button>
+            </div>
         </div>
     </div>
 
@@ -210,7 +239,6 @@
     </div>
 
     <script>
-        // BASE DE DATOS LOCAL INTERNA COMPLETA (JSON)
         const CAMPINGS_DATA = [
             {
                 id: "camp-001",
@@ -228,7 +256,7 @@
                 telefono: "+34972340312",
                 desc_corta: "Acampada libre frente al mar de la Costa Brava, inmerso en un bosque centenario.",
                 desc_larga: "El Camping Cala Llevadó representa el sentido original del camping en plena naturaleza. Situado en Tossa de Mar, ofrece espectaculares parcelas con vistas a calas aisladas de agua cristalina y bungalows de madera eco-friendly.",
-                servicios: ["wc", "piscina", "wifi", "mascotas"],
+                servicios: ["wc", "piscina", "wifi", "mascotas", "ninos"],
                 coordenadas: "41.7176,2.9189",
                 valoracion: 4.8,
                 resenas_count: 512,
@@ -254,7 +282,7 @@
                 telefono: "+34985846463",
                 desc_corta: "El refugio perfecto a los pies de las montañas de Asturias. Aire puro norteño.",
                 desc_larga: "Ubicado estratégicamente en Avín, cuenta con inmejorables servicios para montañeros y familias. Prados verdes inmensos para tu parcela y cabañas de piedra rústica perfectamente equipadas para las noches frescas.",
-                servicios: ["wc", "wifi", "mascotas"],
+                servicios: ["wc", "wifi", "mascotas", "ninos"],
                 coordenadas: "43.3341,-4.9318",
                 valoracion: 4.5,
                 resenas_count: 324,
@@ -306,7 +334,7 @@
                 telefono: "+34974485084",
                 desc_corta: "Instalaciones de primer nivel en la entrada del místico Valle de Tena.",
                 desc_larga: "Camping en Huesca con piscinas climatizadas de verano, restaurante de montaña espectacular y parcelas escalonadas que garantizan sombra y vistas de postal pirenaica.",
-                servicios: ["wc", "piscina", "wifi", "mascotas"],
+                servicios: ["wc", "piscina", "wifi", "mascotas", "ninos"],
                 coordenadas: "42.6144,-0.3155",
                 valoracion: 4.7,
                 resenas_count: 840,
@@ -358,7 +386,7 @@
                 telefono: "+34972570054",
                 desc_corta: "Sostenibilidad pura a las orillas del lago más grande de Cataluña.",
                 desc_larga: "Un camping boutique volcado en el medio ambiente. Actividades de kayak directas, baños secos de última tecnología de diseño y bungalows bioclimáticos de madera local.",
-                servicios: ["wc", "wifi"],
+                servicios: ["wc", "wifi", "ninos"],
                 coordenadas: "42.1158,2.7561",
                 valoracion: 4.6,
                 resenas_count: 220,
@@ -370,7 +398,6 @@
             }
         ];
 
-        // POOL DE MENSAJES ALEATORIOS DE RESERVA
         const BOOKING_MESSAGES = [
             "Los precios más refrescantes del verano.",
             "Los mejores campings de España.",
@@ -378,10 +405,8 @@
             "Estas vacaciones van a ser refrescantes."
         ];
 
-        // ADMINISTRADOR DE TELEGRAM (Cambiar por tu username real de Telegram)
         const TELEGRAM_ADMIN_USERNAME = "TuUsuarioTelegram";
 
-        // ESTADO GLOBAL DE LA APLICACIÓN
         class CampVibesApp {
             constructor() {
                 this.campings = [...CAMPINGS_DATA];
@@ -389,13 +414,10 @@
                 this.favorites = JSON.parse(localStorage.getItem('camp_favorites')) || [];
                 this.currentTypeFilter = 'todos';
                 this.activeTab = 'home';
-                
-                // Paginación Lazy Load (de 5 en 5)
                 this.homeLimit = 5;
                 this.favsLimit = 5;
-
-                // Carrusel imágenes activas de cada tarjeta
                 this.carouselStates = {};
+                this.touchStartX = 0;
             }
 
             init() {
@@ -405,11 +427,16 @@
                 this.renderFavorites();
             }
 
-            // SIMULACIÓN / API LOGIN TELEGRAM
             initTelegramUser() {
-                let user = JSON.parse(localStorage.getItem('camp_tg_user'));
+                let user;
+                // Intentar leer de la API oficial de Telegram WebApp si está inyectada en el entorno
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                    user = window.Telegram.WebApp.initDataUnsafe.user;
+                } else {
+                    user = JSON.parse(localStorage.getItem('camp_tg_user'));
+                }
+
                 if (!user) {
-                    // Datos por defecto basados en requisitos de API Telegram
                     user = {
                         id: 77712345,
                         first_name: "Álvaro",
@@ -422,23 +449,19 @@
                 const container = document.getElementById('telegram-profile-container');
                 container.innerHTML = `
                     <div class="flex items-center gap-2 bg-slate-100/80 px-3 py-1.5 rounded-full border border-slate-200/40">
-                        <img src="${user.photo_url}" alt="Avatar" class="w-7 h-7 rounded-full object-cover ring-2 ring-mar">
+                        <img src="${user.photo_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" alt="Avatar" class="w-7 h-7 rounded-full object-cover ring-2 ring-mar">
                         <div class="flex flex-col text-left leading-none">
-                            <span class="text-xs font-bold text-slate-800">${user.first_name}</span>
-                            <span class="text-[10px] text-slate-500">@${user.username}</span>
+                            <span class="text-xs font-bold text-slate-800">${user.first_name || 'Usuario'}</span>
+                            <span class="text-[10px] text-slate-500">ID: ${user.id || '@' + user.username}</span>
                         </div>
                     </div>
                 `;
             }
 
-            // CONTROL DE PÁGINAS (TABS)
             changeTab(tab) {
                 this.activeTab = tab;
                 document.getElementById('view-home').classList.toggle('hidden', tab !== 'home');
                 document.getElementById('view-favorites').classList.toggle('hidden', tab !== 'favorites');
-                
-                const btnHome = document.getElementById('nav-home');
-                const btnFavs = document.getElementById('nav-favorites');
                 
                 if(tab === 'home') {
                     document.getElementById('nav-home').className = "text-marDark border-b-2 border-marDark pb-1 px-1 transition-all";
@@ -451,9 +474,12 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
 
-            // GENERADOR DE NÚMERO FOMO DIARIO FIJO (Cambia a las 00:00 del cliente)
+            toggleFilterModal(show) {
+                document.getElementById('filter-modal').classList.toggle('hidden', !show);
+            }
+
             getFomoCount(id) {
-                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                const today = new Date().toISOString().split('T')[0];
                 const seedString = id + today;
                 let hash = 0;
                 for (let i = 0; i < seedString.length; i++) {
@@ -464,7 +490,6 @@
                 return Math.abs(hash % (max - min + 1)) + min;
             }
 
-            // COLOR DE ETIQUETA LLAMATIVA
             getTagColorClass(tag) {
                 switch(tag.toUpperCase()) {
                     case 'DESTACADO': return 'bg-amber-400 text-slate-900';
@@ -474,22 +499,13 @@
                 }
             }
 
-            // INTERCAMBIO FILTRO DE CATEGORÍA PRINCIPAL (REGLA DE ORO)
             toggleTypeFilter(type) {
                 this.currentTypeFilter = type;
-                ['todos', 'parcela', 'bungalow', 'cabana'].forEach(t => {
-                    const btn = document.getElementById(`btn-type-${t}`);
-                    if(t === type) {
-                        btn.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-marDark text-white shadow-sm shadow-marDark/20 whitespace-nowrap";
-                    } else {
-                        btn.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap";
-                    }
-                });
-                this.homeLimit = 5; // Reset lazy load
+                document.getElementById('category-select').value = type;
+                this.homeLimit = 5;
                 this.filterCampings();
             }
 
-            // ORDENACIÓN DIRECTA AL HACER CLIC EN LA ETIQUETA DE LA TARJETA
             orderByBadge(tag) {
                 this.clearFilters();
                 this.filteredCampings = this.campings.filter(c => c.etiqueta.toUpperCase() === tag.toUpperCase());
@@ -498,185 +514,190 @@
                 this.renderGrid();
             }
 
-            // LIMPIAR TODOS LOS FILTROS
             clearFilters() {
                 document.getElementById('search-input').value = '';
+                document.getElementById('category-select').value = 'todos';
                 document.getElementById('filter-wc').checked = false;
                 document.getElementById('filter-piscina').checked = false;
                 document.getElementById('filter-oferta').checked = false;
+                document.getElementById('filter-mascotas').checked = false;
+                document.getElementById('filter-ninos').checked = false;
                 document.getElementById('grid-title').innerText = "Campings en España";
-                this.toggleTypeFilter('todos');
+                this.currentTypeFilter = 'todos';
+                this.homeLimit = 5;
+                this.filterCampings();
             }
 
-            // MOTOR DE FILTRADO AVANZADO Y BÚSQUEDA
             filterCampings() {
                 const searchVal = document.getElementById('search-input').value.toLowerCase();
                 const checkWc = document.getElementById('filter-wc').checked;
                 const checkPiscina = document.getElementById('filter-piscina').checked;
                 const checkOferta = document.getElementById('filter-oferta').checked;
+                const checkMascotas = document.getElementById('filter-mascotas').checked;
+                const checkNinos = document.getElementById('filter-ninos').checked;
 
                 this.filteredCampings = this.campings.filter(camp => {
-                    // Texto
                     const matchesText = camp.nombre.toLowerCase().includes(searchVal) || camp.desc_corta.toLowerCase().includes(searchVal);
                     
-                    // Categoría / Tipo (Regla de oro)
                     let matchesType = true;
                     if(this.currentTypeFilter !== 'todos') {
                         matchesType = camp.tipos[this.currentTypeFilter] && camp.tipos[this.currentTypeFilter].disponible;
                     }
 
-                    // Servicios avanzados
                     const matchesWc = !checkWc || camp.servicios.includes('wc');
                     const matchesPiscina = !checkPiscina || camp.servicios.includes('piscina');
+                    const matchesMascotas = !checkMascotas || camp.servicios.includes('mascotas');
+                    const matchesNinos = !checkNinos || camp.servicios.includes('ninos');
 
-                    // En Oferta
                     let matchesOferta = true;
                     if(checkOferta) {
                         matchesOferta = Object.values(camp.tipos).some(t => t.oferta === true);
                     }
 
-                    return matchesText && matchesType && matchesWc && matchesPiscina && matchesOferta;
+                    return matchesText && matchesType && matchesWc && matchesPiscina && matchesOferta && matchesMascotas && matchesNinos;
                 });
 
                 this.renderGrid();
             }
 
-            // RENDERIZADO CARRUSEL DESTACADOS
             renderFeaturedCarousel() {
                 const carousel = document.getElementById('featured-carousel');
                 const featured = this.campings.filter(c => c.etiqueta === 'DESTACADO');
                 
                 carousel.innerHTML = featured.map(camp => `
-                    <div class="min-w-[280px] md:min-w-[320px] bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 snap-start flex-shrink-0 cursor-pointer" onclick="app.orderByBadge('DESTACADO')">
-                        <div class="relative h-40">
+                    <div class="min-w-[240px] md:min-w-[280px] bg-white rounded-xl overflow-hidden shadow-sm border border-slate-100 snap-start flex-shrink-0 cursor-pointer" onclick="app.orderByBadge('DESTACADO')">
+                        <div class="relative h-28">
                             <img src="${camp.imagenes[0]}" class="w-full h-full object-cover" alt="${camp.nombre}">
-                            <span class="absolute top-3 left-3 bg-amber-400 text-slate-900 font-extrabold text-[10px] px-2.5 py-1 rounded-md shadow-sm">🔥 ${camp.etiqueta}</span>
+                            <span class="absolute top-2 left-2 bg-amber-400 text-slate-900 font-extrabold text-[9px] px-2 py-0.5 rounded-md shadow-sm">🔥 ${camp.etiqueta}</span>
                         </div>
-                        <div class="p-4">
-                            <h4 class="font-bold text-slate-800 text-sm truncate">${camp.nombre}</h4>
-                            <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                                <i class="fa-solid fa-star text-amber-400"></i> ${camp.valoracion} (${camp.resenas_count} reseñas)
+                        <div class="p-2">
+                            <h4 class="font-bold text-slate-800 text-xs truncate">${camp.nombre}</h4>
+                            <p class="text-[10px] text-slate-500 flex items-center gap-1">
+                                <i class="fa-solid fa-star text-amber-400"></i> ${camp.valoracion}
                             </p>
                         </div>
                     </div>
                 `).join('');
             }
 
-            // MAQUETADOR DE LA SÚPER TARJETA DE CAMPING COMPLETA
+            // CARGA TÁCTIL MÓVIL
+            handleTouchStart(e) {
+                this.touchStartX = e.touches[0].clientX;
+            }
+
+            handleTouchEnd(e, id) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const diff = this.touchStartX - touchEndX;
+                if (Math.abs(diff) > 40) { // Umbral mínimo de swipe
+                    if (diff > 0) {
+                        this.nextImage(id);
+                    } else {
+                        this.prevImage(id);
+                    }
+                }
+            }
+
             createCardHTML(camp) {
                 const isFav = this.favorites.includes(camp.id);
                 const fomoPeople = this.getFomoCount(camp.id);
                 
-                // Carrusel interno de imágenes
                 if (!this.carouselStates[camp.id]) this.carouselStates[camp.id] = 0;
                 const activeImgIdx = this.carouselStates[camp.id];
 
-                // Render precios por tipo
-                let pricesHTML = '';
+                // Fila única y súper compacta para tipos y precios
+                let pricesHTML = '<div class="flex gap-1.5 overflow-x-auto py-1">';
                 Object.keys(camp.tipos).forEach(tipoKey => {
                     const tData = camp.tipos[tipoKey];
                     if(tData.disponible) {
-                        let finalPriceHTML = `<span class="font-bold text-slate-700 text-xs">${tData.precio}€</span>`;
-                        let discountBadge = '';
-                        
+                        let finalPriceHTML = `<span class="font-bold text-slate-700 text-[11px]">${tData.precio}€</span>`;
                         if(tData.oferta) {
-                            const discountPct = Math.round(((tData.precio - tData.precio_oferta) / tData.precio) * 100);
-                            discountBadge = `<span class="bg-emerald-100 text-emerald-600 text-[10px] font-black px-1.5 py-0.5 rounded-md animate-pulse">-${discountPct}%</span>`;
-                            finalPriceHTML = `
-                                <span class="line-through text-slate-400 text-[11px] mr-1">${tData.precio}€</span>
-                                <span class="font-extrabold text-emerald-500 text-sm">${tData.precio_oferta}€</span>
-                            `;
+                            finalPriceHTML = `<span class="font-extrabold text-emerald-500 text-[11px]">${tData.precio_oferta}€</span>`;
                         }
-
                         pricesHTML += `
-                            <div class="flex items-center justify-between bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
-                                <span class="capitalize text-[11px] text-slate-500 font-medium">${tipoKey === 'cabana' ? '🪵 Cabaña' : tipoKey === 'bungalow' ? '🏡 Bungalow' : '🔲 Parcela'}</span>
-                                <div class="flex items-center gap-1.5">
-                                    ${discountBadge}
-                                    ${finalPriceHTML}
-                                </div>
+                            <div class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 flex-shrink-0 text-[10px]">
+                                <span class="text-slate-500 font-medium">${tipoKey === 'cabana' ? '🪵' : tipoKey === 'bungalow' ? '🏡' : '🔲'}</span>
+                                ${finalPriceHTML}
                             </div>
                         `;
                     }
                 });
+                pricesHTML += '</div>';
 
-                // Tabla de servicios
                 const servicesListHTML = camp.servicios.map(s => {
                     let icon = '⛺';
                     if (s === 'wc') icon = '🚾 Baño';
                     if (s === 'piscina') icon = '🏊 Piscina';
                     if (s === 'wifi') icon = '📶 Wifi';
                     if (s === 'mascotas') icon = '🐾 Mascotas';
-                    return `<span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-semibold text-[10px] flex items-center gap-1">${icon}</span>`;
+                    if (s === 'ninos') icon = '👶 Niños';
+                    return `<span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold text-[9px] flex items-center gap-1">${icon}</span>`;
                 }).join('');
 
                 return `
-                    <div class="bg-white rounded-[26px] overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col lazy-card" id="card-${camp.id}">
-                        <div class="relative h-56 w-full overflow-hidden group">
+                    <div class="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col lazy-card" id="card-${camp.id}">
+                        <div class="relative h-44 w-full overflow-hidden group" 
+                             touchstart="app.handleTouchStart(event)" 
+                             touchend="app.handleTouchEnd(event, '${camp.id}')">
                             <img src="${camp.imagenes[activeImgIdx]}" id="img-render-${camp.id}" class="w-full h-full object-cover transition-all duration-500" alt="${camp.nombre}">
                             
-                            <button onclick="event.stopPropagation(); app.toggleFavorite('${camp.id}')" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 flex items-center justify-center shadow-md active:scale-90 transition-all z-20">
-                                <i class="${isFav ? 'fa-solid text-fomoCoral' : 'fa-regular text-slate-400'} fa-heart text-base"></i>
+                            <button onclick="event.stopPropagation(); app.toggleFavorite('${camp.id}')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center shadow-md active:scale-90 transition-all z-20">
+                                <i class="${isFav ? 'fa-solid text-fomoCoral' : 'fa-regular text-slate-400'} fa-heart text-xs"></i>
                             </button>
 
-                            <button onclick="event.stopPropagation(); app.prevImage('${camp.id}')" class="absolute left-2 top-1/2 -mt-4 w-8 h-8 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-left"></i></button>
-                            <button onclick="event.stopPropagation(); app.nextImage('${camp.id}')" class="absolute right-2 top-1/2 -mt-4 w-8 h-8 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button onclick="event.stopPropagation(); app.prevImage('${camp.id}')" class="absolute left-1 top-1/2 -mt-3 w-6 h-6 rounded-full bg-white/70 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button onclick="event.stopPropagation(); app.nextImage('${camp.id}')" class="absolute right-1 top-1/2 -mt-3 w-6 h-6 rounded-full bg-white/70 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-right"></i></button>
                             
-                            <span class="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full font-medium z-20">${activeImgIdx + 1}/5</span>
+                            <span class="absolute bottom-2 right-2 bg-black/50 backdrop-blur-sm text-white text-[9px] px-1.5 py-0.5 rounded font-medium z-20">${activeImgIdx + 1}/5</span>
                         </div>
 
-                        <div class="p-5 flex-1 flex flex-col space-y-4">
+                        <div class="p-3 flex-1 flex flex-col space-y-2">
                             <div>
-                                <div class="flex items-start justify-between gap-2 mb-1">
-                                    <h3 class="font-extrabold text-slate-800 text-base leading-snug truncate">${camp.nombre}</h3>
-                                    <span onclick="app.orderByBadge('${camp.etiqueta}')" class="text-[9px] font-black tracking-wider px-2.5 py-1 rounded-md cursor-pointer ${this.getTagColorClass(camp.etiqueta)} transform hover:scale-105 transition-all shadow-sm flex-shrink-0">${camp.etiqueta}</span>
+                                <div class="flex items-start justify-between gap-1 mb-0.5">
+                                    <h3 class="font-extrabold text-slate-800 text-sm leading-snug truncate">${camp.nombre}</h3>
+                                    <span onclick="app.orderByBadge('${camp.etiqueta}')" class="text-[8px] font-black tracking-wider px-1.5 py-0.5 rounded cursor-pointer ${this.getTagColorClass(camp.etiqueta)} transform hover:scale-105 transition-all shadow-sm flex-shrink-0">${camp.etiqueta}</span>
                                 </div>
-                                <div onclick="app.toggleDetails('${camp.id}')" class="flex items-center gap-1.5 text-xs text-slate-500 font-medium cursor-pointer hover:text-marDark transition-all">
-                                    <div class="text-amber-400 flex items-center"><i class="fa-solid fa-star"></i></div>
+                                <div onclick="app.toggleDetails('${camp.id}')" class="flex items-center gap-1 text-[11px] text-slate-500 font-medium cursor-pointer hover:text-marDark transition-all">
+                                    <div class="text-amber-400 flex items-center"><i class="fa-solid fa-star text-[10px]"></i></div>
                                     <span class="text-slate-700 font-bold">${camp.valoracion}</span>
                                     <span class="underline">(${camp.resenas_count} opiniones)</span>
                                 </div>
                             </div>
 
-                            <p class="text-xs text-slate-500 leading-relaxed">${camp.desc_corta}</p>
+                            <p class="text-[11px] text-slate-500 leading-normal line-clamp-2">${camp.desc_corta}</p>
 
-                            <div class="bg-fomoCoral/10 px-3 py-2 rounded-xl flex items-center gap-2 text-fomoCoral font-bold text-[11px]">
-                                <i class="fa-solid fa-fire animate-bounce"></i>
-                                <span>${fomoPeople} personas agregaron este camping a favoritos hoy.</span>
+                            <div class="bg-fomoCoral/10 px-2 py-1 rounded-lg flex items-center gap-1 text-fomoCoral font-bold text-[10px]">
+                                <i class="fa-solid fa-fire text-[9px]"></i>
+                                <span>${fomoPeople} guardados hoy.</span>
                             </div>
 
-                            <div class="space-y-1.5">
-                                ${pricesHTML}
-                            </div>
+                            ${pricesHTML}
 
                             <div id="details-${camp.id}" class="details-content">
-                                <div class="pt-2 pb-4 space-y-3 border-t border-slate-100 mt-2">
-                                    <h5 class="text-xs font-bold text-slate-700">Sobre el alojamiento:</h5>
-                                    <p class="text-[11px] text-slate-500 leading-relaxed">${camp.desc_larga}</p>
-                                    <h5 class="text-xs font-bold text-slate-700 pt-1">Servicios del recinto:</h5>
-                                    <div class="flex flex-wrap gap-2">${servicesListHTML}</div>
+                                <div class="pt-1.5 pb-2 space-y-1.5 border-t border-slate-100 mt-1">
+                                    <p class="text-[10px] text-slate-500 leading-relaxed">${camp.desc_larga}</p>
+                                    <div class="flex flex-wrap gap-1">${servicesListHTML}</div>
                                 </div>
                             </div>
 
-                            <button onclick="app.toggleDetails('${camp.id}')" id="btn-toggle-${camp.id}" class="w-full text-center text-xs font-bold text-slate-400 hover:text-slate-600 transition-all flex items-center justify-center gap-1">
-                                Ver detalles y servicios <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            <button onclick="app.toggleDetails('${camp.id}')" id="btn-toggle-${camp.id}" class="w-full text-center text-[10px] font-bold text-slate-400 hover:text-slate-600 transition-all flex items-center justify-center gap-1">
+                                Ver más <i class="fa-solid fa-chevron-down text-[8px]"></i>
                             </button>
 
-                            <div class="pt-2 grid grid-cols-2 gap-2">
-                                <button onclick="app.openMaps('${camp.nombre}', '${camp.coordenadas}')" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
-                                    <i class="fa-solid fa-map-pin text-marDark"></i> Cómo llegar
+                            <div class="pt-1 grid grid-cols-2 gap-1.5">
+                                <button onclick="app.openMaps('${camp.nombre}', '${camp.coordenadas}')" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-map-pin text-marDark text-[10px]"></i> Llegar
                                 </button>
-                                <button onclick="app.handlePhoneAction('${camp.telefono}')" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 truncate">
-                                    <i class="fa-solid fa-phone text-teal-500"></i> Llamar / Copiar
+                                <button onclick="app.handlePhoneAction('${camp.telefono}')" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1 truncate">
+                                    <i class="fa-solid fa-phone text-teal-500 text-[10px]"></i> Llamar
                                 </button>
-                                <a href="${camp.url_web}" target="_blank" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
-                                    <i class="fa-solid fa-globe text-indigo-400"></i> Web oficial
+                                <a href="${camp.url_web}" target="_blank" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-globe text-indigo-400 text-[10px]"></i> Web
                                 </a>
-                                <button onclick="app.openTelegramSupport('${camp.id}', '${camp.nombre}')" class="px-3 py-2.5 bg-sky-50 hover:bg-sky-100 text-sky-600 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
-                                    <i class="fa-brands fa-telegram text-base"></i> Soporte
+                                <button onclick="app.openTelegramSupport('${camp.id}', '${camp.nombre}')" class="px-2 py-2 bg-sky-50 hover:bg-sky-100 text-sky-600 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
+                                    <i class="fa-brands fa-telegram text-xs"></i> Soporte
                                 </button>
-                                <button onclick="app.triggerBookingFlow('${camp.id}')" class="col-span-2 mt-1 py-3 bg-gradient-to-r from-marDark to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-extrabold text-sm rounded-xl shadow-md shadow-marDark/20 active:scale-[0.98] transition-all tracking-wide flex items-center justify-center gap-2">
-                                    Reservar Alojamiento <i class="fa-solid fa-umbrella-beach"></i>
+                                <button onclick="app.triggerBookingFlow('${camp.id}')" class="col-span-2 mt-0.5 py-2.5 bg-gradient-to-r from-marDark to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-extrabold text-xs rounded-lg shadow-sm active:scale-[0.98] transition-all tracking-wide flex items-center justify-center gap-1.5">
+                                    Reservar Alojamiento <i class="fa-solid fa-umbrella-beach text-xs"></i>
                                 </button>
                             </div>
                         </div>
@@ -684,22 +705,19 @@
                 `;
             }
 
-            // RENDER REGLA DE ORO CON LAZY LOAD (HOME)
             renderGrid() {
                 const grid = document.getElementById('campings-grid');
-                document.getElementById('results-count').innerText = `${this.filteredCampings.length} campings encontrados`;
+                document.getElementById('results-count').innerText = `${this.filteredCampings.length} campings`;
                 
                 if (this.filteredCampings.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-medium text-sm">No hay campings que coincidan con los filtros de vacaciones 🏖️</div>`;
+                    grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-medium text-xs">No hay campings que coincidan con los filtros 🏖️</div>`;
                     document.getElementById('lazy-load-container').classList.add('hidden');
                     return;
                 }
 
-                // Slice para Lazy Load manual de 5 en 5
                 const slicedData = this.filteredCampings.slice(0, this.homeLimit);
                 grid.innerHTML = slicedData.map(camp => this.createCardHTML(camp)).join('');
 
-                // Mostrar u ocultar botón de Cargar Más
                 const btnContainer = document.getElementById('lazy-load-container');
                 if (this.homeLimit >= this.filteredCampings.length) {
                     btnContainer.classList.add('hidden');
@@ -713,7 +731,6 @@
                 this.renderGrid();
             }
 
-            // REGLA DE ORO CON LAZY LOAD (FAVORITOS)
             renderFavorites() {
                 const grid = document.getElementById('favs-grid');
                 const emptyState = document.getElementById('favs-empty-state');
@@ -743,7 +760,6 @@
                 this.renderFavorites();
             }
 
-            // SISTEMA LÓGICA DE FAVORITOS LOCALSTORAGE
             toggleFavorite(id) {
                 if (this.favorites.includes(id)) {
                     this.favorites = this.favorites.filter(favId => favId !== id);
@@ -751,28 +767,24 @@
                     this.favorites.push(id);
                 }
                 localStorage.setItem('camp_favorites', JSON.stringify(this.favorites));
-                
-                // Actualizar vistas sincronizadas
                 this.filterCampings();
                 if(this.activeTab === 'favorites') this.renderFavorites();
             }
 
-            // MANEJO INTERNO DE GALERÍA DE IMÁGENES POR TARJETA
             nextImage(id) {
                 const camp = this.campings.find(c => c.id === id);
                 this.carouselStates[id] = (this.carouselStates[id] + 1) % camp.imagenes.length;
                 document.getElementById(`img-render-${id}`).src = camp.imagenes[this.carouselStates[id]];
-                document.querySelector(`#card-${id} span.bottom-3`).innerText = `${this.carouselStates[id] + 1}/5`;
+                document.querySelector(`#card-${id} span.bottom-2`).innerText = `${this.carouselStates[id] + 1}/5`;
             }
 
             prevImage(id) {
                 const camp = this.campings.find(c => c.id === id);
                 this.carouselStates[id] = (this.carouselStates[id] - 1 + camp.imagenes.length) % camp.imagenes.length;
                 document.getElementById(`img-render-${id}`).src = camp.imagenes[this.carouselStates[id]];
-                document.querySelector(`#card-${id} span.bottom-3`).innerText = `${this.carouselStates[id] + 1}/5`;
+                document.querySelector(`#card-${id} span.bottom-2`).innerText = `${this.carouselStates[id] + 1}/5`;
             }
 
-            // EFECTO DESPLEGABLE ELEGANTE (ACORDEÓN SLIDE)
             toggleDetails(id) {
                 const element = document.getElementById(`details-${id}`);
                 const btn = document.getElementById(`btn-toggle-${id}`);
@@ -780,18 +792,28 @@
                 
                 element.classList.toggle('open', isOpening);
                 btn.innerHTML = isOpening 
-                    ? `Ocultar información <i class="fa-solid fa-chevron-up text-[10px]"></i>` 
-                    : `Ver detalles y servicios <i class="fa-solid fa-chevron-down text-[10px]"></i>`;
+                    ? `Ocultar <i class="fa-solid fa-chevron-up text-[8px]"></i>` 
+                    : `Ver más <i class="fa-solid fa-chevron-down text-[8px]"></i>`;
             }
 
-            // VENTANA FLOTANTE GOOGLE MAPS
             openMaps(nombre, coordenadas) {
                 document.getElementById('maps-modal-title').innerHTML = `<i class="fa-solid fa-map-location-dot text-marDark"></i> Cómo llegar a ${nombre}`;
                 const container = document.getElementById('maps-iframe-container');
-                // Iframe Embed Limpio de Google Maps utilizando coordenadas
                 container.innerHTML = `
                     <iframe class="w-full h-full border-none" src="https://maps.google.com/maps?q=${coordenadas}&z=14&output=embed" allowfullscreen="" loading="lazy"></iframe>
                 `;
+                
+                // Configurar acciones extendidas del modal de mapas
+                document.getElementById('btn-copy-coords').onclick = () => {
+                    navigator.clipboard.writeText(coordenadas).then(() => {
+                        alert("¡Coordenadas copiadas al portapapeles! 📋 (" + coordenadas + ")");
+                    });
+                };
+                
+                document.getElementById('btn-open-gmaps').onclick = () => {
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${coordenadas}`, '_blank');
+                };
+
                 document.getElementById('maps-modal').classList.remove('hidden');
             }
 
@@ -800,7 +822,6 @@
                 document.getElementById('maps-iframe-container').innerHTML = '';
             }
 
-            // BLOQUE ACCIÓN TELÉFONO DUAL
             handlePhoneAction(tlf) {
                 const action = confirm(`¿Qué deseas hacer con el teléfono (${tlf})?\n\nAceptar: Llamar de inmediato\nCancelar: Copiar al portapapeles`);
                 if(action) {
@@ -812,27 +833,22 @@
                 }
             }
 
-            // REDIRECCIÓN ENLACE SOPORTE PRIVADO TELEGRAM
             openTelegramSupport(id, nombre) {
                 const baseText = `Hola! Solicito soporte e información avanzada sobre el camping ${nombre} (ID: ${id}).`;
                 const encodedText = encodeURIComponent(baseText);
                 window.open(`https://t.me/${TELEGRAM_ADMIN_USERNAME}?text=${encodedText}`, '_blank');
             }
 
-            // 5. MODAL DE RESERVA "SUMMER FLOW" (ANIMACIÓN DEL SOL Y REDIRECCIÓN 5 SEG)
             triggerBookingFlow(id) {
                 const camp = this.campings.find(c => c.id === id);
                 const modal = document.getElementById('booking-modal');
                 const msgTextNode = document.getElementById('booking-random-msg');
                 
-                // Mensaje aleatorio del pool
                 const randomMsg = BOOKING_MESSAGES[Math.floor(Math.random() * BOOKING_MESSAGES.length)];
                 msgTextNode.innerText = `"${randomMsg}"`;
                 
-                // Desplegar modal flotante elegante blur
                 modal.classList.remove('hidden');
 
-                // Cronómetro de 5 segundos exactos para redirección final
                 setTimeout(() => {
                     modal.classList.add('hidden');
                     window.open(camp.url_reservar, '_blank');
@@ -840,7 +856,6 @@
             }
         }
 
-        // Instanciar e inicializar la aplicación completa al cargar
         const app = new CampVibesApp();
         window.addEventListener('DOMContentLoaded', () => app.init());
     </script>

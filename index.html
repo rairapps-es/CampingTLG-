@@ -21,6 +21,7 @@
             }
         }
     </script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .glass-header {
@@ -94,34 +95,47 @@
     <main class="max-w-7xl mx-auto px-4 mt-4">
         
         <div id="view-home" class="space-y-6">
-            <section class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-2 flex-wrap md:flex-nowrap">
-                <div class="relative flex-1 min-w-[200px]">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                    <input type="text" id="search-input" oninput="app.filterCampings()" placeholder="Buscar camping..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-marDark text-xs">
-                </div>
-                
-                <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
-                    <select id="category-select" onchange="app.toggleTypeFilter(this.value)" class="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer px-2 py-1">
-                        <option value="todos">☀️ Todos</option>
-                        <option value="parcela">🔲 Parcelas</option>
-                        <option value="bungalow">🏡 Bungalows</option>
-                        <option value="cabana">🪵 Cabañas</option>
-                    </select>
+            <section class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-3">
+                <div class="flex items-center gap-2 flex-wrap md:flex-nowrap w-full">
+                    <div class="relative flex-1 min-w-[200px]">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
+                        <input type="text" id="search-input" oninput="app.filterCampings()" placeholder="Buscar camping por nombre, descripción, ciudad..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-marDark text-xs">
+                    </div>
+                    
+                    <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
+                        <select id="category-select" onchange="app.toggleTypeFilter(this.value)" class="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer px-2 py-1">
+                            <option value="todos">☀️ Todos</option>
+                            <option value="parcela">🔲 Parcelas</option>
+                            <option value="bungalow">🏡 Bungalows</option>
+                            <option value="cabana">🪵 Cabañas</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
+                        <select id="environment-select" onchange="app.filterCampings()" class="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer px-2 py-1">
+                            <option value="todos">🏞️ Todo Entorno</option>
+                            <option value="playa">🏖️ Costa / Playa</option>
+                            <option value="montaña">⛰️ Montaña</option>
+                        </select>
+                    </div>
+
+                    <button onclick="app.toggleFilterModal(true)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-sliders text-xs"></i> Filtrar
+                    </button>
+                    
+                    <button onclick="app.clearFilters()" class="text-marDark hover:underline font-bold text-[11px] ml-auto md:ml-0 px-2">Limpiar</button>
                 </div>
 
-                <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
-                    <select id="environment-select" onchange="app.filterCampings()" class="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer px-2 py-1">
-                        <option value="todos">🏞️ Todo Entorno</option>
-                        <option value="playa">🏖️ Costa / Playa</option>
-                        <option value="montaña">⛰️ Montaña</option>
-                    </select>
+                <div id="geo-tg-container" class="border-t border-slate-100 pt-2 flex items-center justify-between flex-wrap gap-2 text-xs">
+                    <button id="btn-request-geo" onclick="app.requestTelegramLocation()" class="px-3 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-600 font-bold rounded-xl transition-all flex items-center gap-1.5 text-[11px]">
+                        <i class="fa-brands fa-telegram"></i> Buscar cerca de mí
+                    </button>
+                    <div id="distance-slider-wrapper" class="hidden flex-1 flex items-center gap-3 bg-slate-50 px-3 py-1.5 rounded-xl min-w-[240px]">
+                        <span class="text-slate-500 font-medium whitespace-nowrap text-[11px]">Rango:</span>
+                        <input type="range" id="distance-range" min="5" max="500" value="500" oninput="app.onDistanceSliderChange(this.value)" class="w-full accent-marDark h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                        <span id="distance-range-val" class="font-bold text-marDark text-[11px] whitespace-nowrap">500 km</span>
+                    </div>
                 </div>
-
-                <button onclick="app.toggleFilterModal(true)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all">
-                    <i class="fa-solid fa-sliders text-xs"></i> Filtrar
-                </button>
-                
-                <button onclick="app.clearFilters()" class="text-marDark hover:underline font-bold text-[11px] ml-auto md:ml-0 px-2">Limpiar</button>
             </section>
 
             <div id="filter-modal" class="fixed inset-0 z-50 glass-modal flex items-center justify-center p-4 hidden">
@@ -275,6 +289,8 @@
             {
                 id: "camp-001",
                 nombre: "Camping Cala Llevadó",
+                ciudad: "Tossa de Mar",
+                comunidad: "Cataluña",
                 etiqueta: "DESTACADO",
                 entorno: "playa",
                 distancia: "A pie de playa (0m)",
@@ -304,6 +320,8 @@
             {
                 id: "camp-002",
                 nombre: "Camping Picos de Europa",
+                ciudad: "Avín (Onís)",
+                comunidad: "Asturias",
                 etiqueta: "RECOMENDADO",
                 entorno: "montaña",
                 distancia: "A pie de montaña (0m)",
@@ -333,6 +351,8 @@
             {
                 id: "camp-003",
                 nombre: "Glamping Doñana Sanctuary",
+                ciudad: "Matalascañas (Almonte)",
+                comunidad: "Andalucía",
                 etiqueta: "POPULAR",
                 entorno: "playa",
                 distancia: "Playa a 1.5km (Matalascañas)",
@@ -362,6 +382,8 @@
             {
                 id: "camp-004",
                 nombre: "Camping Gavín Pirineos",
+                ciudad: "Gavín (Biescas)",
+                comunidad: "Aragón",
                 etiqueta: "DESTACADO",
                 entorno: "montaña",
                 distancia: "A pie de montaña (0m)",
@@ -391,6 +413,8 @@
             {
                 id: "camp-005",
                 nombre: "Camping Cabo de Gata",
+                ciudad: "Cabo de Gata (Níjar)",
+                comunidad: "Andalucía",
                 etiqueta: "POPULAR",
                 entorno: "playa",
                 distancia: "Playa a 400m",
@@ -420,6 +444,8 @@
             {
                 id: "camp-006",
                 nombre: "Eco-Resort Camping Bañoles",
+                ciudad: "Bañolas (Gerona)",
+                comunidad: "Cataluña",
                 etiqueta: "RECOMENDADO",
                 entorno: "montaña",
                 distancia: "A pie de montaña (0m)",
@@ -468,6 +494,10 @@
                 this.favsLimit = 5;
                 this.carouselStates = {};
                 this.touchStartX = 0;
+                
+                // Estados de geolocalización
+                this.userLocation = null;
+                this.maxDistanceFilter = 500; 
             }
 
             init() {
@@ -475,6 +505,11 @@
                 this.renderFeaturedCarousel();
                 this.filterCampings();
                 this.renderFavorites();
+                
+                // Intenta escuchar eventos de ubicación de Telegram si está disponible
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.Location) {
+                    Telegram.WebApp.ready();
+                }
             }
 
             initTelegramUser() {
@@ -505,6 +540,79 @@
                         </div>
                     </div>
                 `;
+            }
+
+            // Integración nativa del API de localización de Telegram WebApp con fallback estándar
+            requestTelegramLocation() {
+                const btn = document.getElementById('btn-request-geo');
+                btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Localizando...`;
+
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.Location && typeof Telegram.WebApp.Location.getLocation === 'function') {
+                    // API de Telegram Oficial 
+                    Telegram.WebApp.Location.getLocation((data) => {
+                        if (data && data.latitude && data.longitude) {
+                            this.setupLocationSuccess(data.latitude, data.longitude);
+                        } else {
+                            this.fallbackBrowserLocation();
+                        }
+                    });
+                } else {
+                    this.fallbackBrowserLocation();
+                }
+            }
+
+            fallbackBrowserLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            this.setupLocationSuccess(position.coords.latitude, position.coords.longitude);
+                        },
+                        () => {
+                            alert("No se pudo obtener la ubicación. Por favor, revisa tus permisos.");
+                            this.resetGeoButton();
+                        }
+                    );
+                } else {
+                    alert("Tu dispositivo o cliente de Telegram no soporta geolocalización.");
+                    this.resetGeoButton();
+                }
+            }
+
+            setupLocationSuccess(lat, lon) {
+                this.userLocation = { lat, lon };
+                
+                // Mostrar slider de distancia en tiempo real
+                document.getElementById('distance-slider-wrapper').classList.remove('hidden');
+                
+                const btn = document.getElementById('btn-request-geo');
+                btn.className = "px-3 py-1.5 bg-emerald-50 text-emerald-600 font-bold rounded-xl transition-all flex items-center gap-1.5 text-[11px]";
+                btn.innerHTML = `<i class="fa-solid fa-location-crosshairs"></i> Ubicación Activa`;
+                
+                this.filterCampings();
+            }
+
+            resetGeoButton() {
+                const btn = document.getElementById('btn-request-geo');
+                btn.className = "px-3 py-1.5 bg-sky-50 hover:bg-sky-100 text-sky-600 font-bold rounded-xl transition-all flex items-center gap-1.5 text-[11px]";
+                btn.innerHTML = `<i class="fa-brands fa-telegram"></i> Buscar cerca de mí`;
+            }
+
+            onDistanceSliderChange(val) {
+                this.maxDistanceFilter = parseInt(val);
+                document.getElementById('distance-range-val').innerText = `${val} km`;
+                this.filterCampings();
+            }
+
+            // Fórmula de Haversine para cálculo exacto de distancias geométricas terrestres
+            calculateDistance(lat1, lon1, lat2, lon2) {
+                const R = 6371; // Radio de la Tierra en km
+                const dLat = (lat2 - lat1) * Math.PI / 180;
+                const dLon = (lon2 - lon1) * Math.PI / 180;
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                          Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
             }
 
             changeTab(tab) {
@@ -582,6 +690,15 @@
                 document.getElementById('filter-canchas').checked = false;
                 document.getElementById('filter-animacion').checked = false;
                 document.getElementById('grid-title').innerText = "Campings en España";
+                
+                // Reset de filtros de proximidad
+                this.userLocation = null;
+                this.maxDistanceFilter = 500;
+                document.getElementById('distance-slider-wrapper').classList.add('hidden');
+                document.getElementById('distance-range').value = 500;
+                document.getElementById('distance-range-val').innerText = "500 km";
+                this.resetGeoButton();
+
                 this.currentTypeFilter = 'todos';
                 this.homeLimit = 5;
                 this.filterCampings();
@@ -602,8 +719,20 @@
                 const checkCanchas = document.getElementById('filter-canchas').checked;
                 const checkAnimacion = document.getElementById('filter-animacion').checked;
 
-                this.filteredCampings = this.campings.filter(camp => {
-                    const matchesText = camp.nombre.toLowerCase().includes(searchVal) || camp.desc_corta.toLowerCase().includes(searchVal);
+                let mappedCampings = this.campings.map(camp => {
+                    let calculatedDist = null;
+                    if (this.userLocation && camp.coordenadas) {
+                        const [cLat, cLon] = camp.coordenadas.split(',').map(Number);
+                        calculatedDist = this.calculateDistance(this.userLocation.lat, this.userLocation.lon, cLat, cLon);
+                    }
+                    return { ...camp, _computedDist: calculatedDist };
+                });
+
+                this.filteredCampings = mappedCampings.filter(camp => {
+                    const matchesText = camp.nombre.toLowerCase().includes(searchVal) || 
+                                        camp.desc_corta.toLowerCase().includes(searchVal) ||
+                                        camp.ciudad.toLowerCase().includes(searchVal) ||
+                                        camp.comunidad.toLowerCase().includes(searchVal);
                     
                     let matchesType = true;
                     if(this.currentTypeFilter !== 'todos') {
@@ -632,8 +761,19 @@
                         matchesOferta = Object.values(camp.tipos).some(t => t.oferta === true);
                     }
 
-                    return matchesText && matchesType && matchesEnvironment && matchesWc && matchesPiscina && matchesOferta && matchesMascotas && matchesNinos && matchesWifi && matchesBar && matchesTienda && matchesParque && matchesCanchas && matchesAnimacion;
+                    let matchesDistance = true;
+                    if (this.userLocation && camp._computedDist !== null) {
+                        matchesDistance = camp._computedDist <= this.maxDistanceFilter;
+                    }
+
+                    return matchesText && matchesType && matchesEnvironment && matchesWc && matchesPiscina && matchesOferta && matchesMascotas && matchesNinos && matchesWifi && matchesBar && matchesTienda && matchesParque && matchesCanchas && matchesAnimacion && matchesDistance;
                 });
+
+                // Ordenación en tiempo real por menor distancia si la ubicación está activa
+                if (this.userLocation) {
+                    this.filteredCampings.sort((a, b) => (a._computedDist || 0) - (b._computedDist || 0));
+                    document.getElementById('grid-title').innerText = "Campings más cercanos a ti";
+                }
 
                 this.renderGrid();
             }
@@ -653,6 +793,7 @@
                             <p class="text-[10px] text-slate-500 flex items-center gap-1">
                                 <i class="fa-solid fa-star text-amber-400"></i> ${camp.valoracion} <span class="text-slate-400 font-normal">(${camp.entorno === 'playa' ? '🏖️ Costa' : '⛰️ Montaña'})</span>
                             </p>
+                            <p class="text-[9px] text-slate-400 truncate"><i class="fa-solid fa-location-dot"></i> ${camp.ciudad}, ${camp.comunidad}</p>
                         </div>
                     </div>
                 `).join('');
@@ -781,14 +922,26 @@
                 caracteristicasTableHTML += `
                     <tr>
                         <td colspan="2" class="p-2 bg-slate-50/50 text-[11px] font-medium text-slate-700 border-t border-slate-100">
-                            <div class="flex items-center gap-1.5 text-slate-600">
-                                ${camp.entorno === 'playa' ? '<i class="fa-solid fa-umbrella-beach text-sky-500"></i>' : '<i class="fa-solid fa-mountain text-amber-600"></i>'}
-                                <span><strong>Localización:</strong> ${camp.distancia}</span>
+                            <div class="flex flex-col gap-1 text-slate-600">
+                                <div class="flex items-center gap-1.5">
+                                    ${camp.entorno === 'playa' ? '<i class="fa-solid fa-umbrella-beach text-sky-500"></i>' : '<i class="fa-solid fa-mountain text-amber-600"></i>'}
+                                    <span><strong>Localización:</strong> ${camp.distancia}</span>
+                                </div>
                             </div>
                         </td>
                     </tr>
                 `;
                 caracteristicasTableHTML += `</tbody></table></div>`;
+
+                // Renderizado hito de distancia calculada en vivo en la tarjeta
+                let liveDistanceBadge = '';
+                if (camp._computedDist !== null && camp._computedDist !== undefined) {
+                    liveDistanceBadge = `
+                        <span class="text-[10px] text-sky-600 font-mono font-bold bg-sky-50 px-2 py-0.5 rounded-full whitespace-nowrap">
+                            <i class="fa-solid fa-location-arrow text-[8px]"></i> a ${camp._computedDist.toFixed(1)} km
+                        </span>
+                    `;
+                }
 
                 return `
                     <div class="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col lazy-card" id="card-${camp.id}">
@@ -813,10 +966,16 @@
                                     <h3 class="font-extrabold text-slate-800 text-sm leading-snug truncate">${camp.nombre}</h3>
                                     <span onclick="app.orderByBadge('${camp.etiqueta}')" class="text-[8px] font-black tracking-wider px-1.5 py-0.5 rounded cursor-pointer ${this.getTagColorClass(camp.etiqueta)} transform hover:scale-105 transition-all shadow-sm flex-shrink-0">${camp.etiqueta}</span>
                                 </div>
-                                <div onclick="app.toggleDetails('${camp.id}')" class="flex items-center gap-1 text-[11px] text-slate-500 font-medium cursor-pointer hover:text-marDark transition-all">
-                                    <div class="text-amber-400 flex items-center"><i class="fa-solid fa-star text-[10px]"></i></div>
-                                    <span class="text-slate-700 font-bold">${camp.valoracion}</span>
-                                    <span class="underline">(${camp.resenas_count} opiniones)</span>
+                                <div class="flex items-center justify-between flex-wrap gap-1">
+                                    <div onclick="app.toggleDetails('${camp.id}')" class="flex items-center gap-1 text-[11px] text-slate-500 font-medium cursor-pointer hover:text-marDark transition-all">
+                                        <div class="text-amber-400 flex items-center"><i class="fa-solid fa-star text-[10px]"></i></div>
+                                        <span class="text-slate-700 font-bold">${camp.valoracion}</span>
+                                        <span class="underline">(${camp.resenas_count} opiniones)</span>
+                                    </div>
+                                    ${liveDistanceBadge}
+                                </div>
+                                <div class="text-[11px] text-slate-400 font-semibold mt-1 flex items-center gap-1">
+                                    <i class="fa-solid fa-map-marker-alt text-slate-300"></i> ${camp.ciudad} (${camp.comunidad})
                                 </div>
                             </div>
 

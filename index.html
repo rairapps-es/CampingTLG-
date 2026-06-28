@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CampVibes España - Tu Acampada Veraniega</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        arena: '#FAFAFA',
+                        mar: '#00F2FE',
+                        marDark: '#4FACFE',
+                        naturaleza: '#4CAF50',
+                        fomoCoral: '#FF6B6B',
+                        fomoSol: '#FFA07A'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .glass-header {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        .glass-modal {
+            background: rgba(10, 25, 41, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        /* Animación del ciclo del sol sobre la cabaña (5 segundos) */
+        @keyframes sunArc {
+            0% {
+                transform: translate(-150px, 80px) scale(0.8);
+                opacity: 0;
+                background-color: #FF6B6B;
+            }
+            15% { opacity: 1; }
+            50% {
+                transform: translate(0px, -60px) scale(1.2);
+                background-color: #FFEB3B;
+                box-shadow: 0 0 30px #FFEB3B;
+            }
+            85% { opacity: 1; }
+            100% {
+                transform: translate(150px, 80px) scale(0.8);
+                opacity: 0;
+                background-color: #FFA07A;
+            }
+        }
+        .animate-sun {
+            animation: sunArc 5s linear infinite;
+        }
+        /* Estilos personalizados para transiciones de acordeón */
+        .details-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .details-content.open {
+            max-height: 1000px;
+            transition: max-height 0.5s ease-in;
+        }
+        /* Lazy load e imágenes */
+        .lazy-card {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInCard 0.4s ease forwards;
+        }
+        @keyframes fadeInCard {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-arena text-slate-800 font-sans min-h-screen pb-12">
+
+    <header class="glass-header sticky top-0 z-50 border-b border-white/40 shadow-sm transition-all">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="app.changeTab('home')">
+                <span class="text-2xl">⛺</span>
+                <h1 class="text-xl font-black bg-gradient-to-r from-marDark to-teal-500 bg-clip-text text-transparent tracking-tight">CampVibes</h1>
+            </div>
+            
+            <nav class="flex items-center gap-6 font-medium text-sm">
+                <button id="nav-home" onclick="app.changeTab('home')" class="text-marDark border-b-2 border-marDark pb-1 px-1 transition-all">Explorar</button>
+                <button id="nav-favs" onclick="app.changeTab('favorites')" class="text-slate-500 hover:text-fomoCoral pb-1 px-1 transition-all flex items-center gap-1">
+                    Mis Favoritos <i class="fa-solid fa-heart text-xs text-fomoCoral"></i>
+                </button>
+            </nav>
+
+            <div id="telegram-profile-container" class="flex items-center gap-3">
+                </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 mt-6">
+        
+        <div id="view-home" class="space-y-8">
+            <section class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="relative md:col-span-1">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400"></i>
+                        <input type="text" id="search-input" oninput="app.filterCampings()" placeholder="¿Dónde quieres acampar hoy?..." class="w-full pl-11 pr-4 py-3 bg-slate-50 rounded-2xl border-none focus:outline-none focus:ring-2 focus:ring-marDark text-sm">
+                    </div>
+                    <div class="flex gap-2 items-center overflow-x-auto md:col-span-2">
+                        <button onclick="app.toggleTypeFilter('todos')" id="btn-type-todos" class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-marDark text-white shadow-sm shadow-marDark/20 whitespace-nowrap">☀️ Todos</button>
+                        <button onclick="app.toggleTypeFilter('parcela')" id="btn-type-parcela" class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">🔲 Parcelas</button>
+                        <button onclick="app.toggleTypeFilter('bungalow')" id="btn-type-bungalow" class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">🏡 Bungalows</button>
+                        <button onclick="app.toggleTypeFilter('cabana')" id="btn-type-cabana" class="px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap">🪵 Cabañas</button>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-3 items-center text-xs text-slate-500">
+                    <span class="font-bold"><i class="fa-solid fa-sliders mr-1"></i> Filtros avanzados:</span>
+                    <label class="flex items-center gap-1 cursor-pointer bg-slate-50 px-3 py-1.5 rounded-lg hover:bg-slate-100">
+                        <input type="checkbox" id="filter-wc" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark"> 🚾 Baños Premium
+                    </label>
+                    <label class="flex items-center gap-1 cursor-pointer bg-slate-50 px-3 py-1.5 rounded-lg hover:bg-slate-100">
+                        <input type="checkbox" id="filter-piscina" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark"> 🏊 Piscina
+                    </label>
+                    <label class="flex items-center gap-1 cursor-pointer bg-slate-50 px-3 py-1.5 rounded-lg hover:bg-slate-100">
+                        <input type="checkbox" id="filter-oferta" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark"> 🏷️ En Oferta
+                    </label>
+                    <button onclick="app.clearFilters()" class="ml-auto text-marDark hover:underline font-bold text-[11px]">Limpiar Filtros</button>
+                </div>
+            </section>
+
+            <section>
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="text-xl">🔥</span>
+                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Joyas del Verano Destacadas</h2>
+                </div>
+                <div id="featured-carousel" class="flex gap-6 overflow-x-auto pb-4 snap-x scroll-smooth">
+                    </div>
+            </section>
+
+            <section>
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">⛺</span>
+                        <h2 id="grid-title" class="text-xl font-extrabold text-slate-800 tracking-tight">Campings en España</h2>
+                    </div>
+                    <span id="results-count" class="text-xs bg-slate-100 font-bold px-3 py-1.5 rounded-full text-slate-500"></span>
+                </div>
+                <div id="campings-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    </div>
+                <div class="flex justify-center mt-12" id="lazy-load-container">
+                    <button onclick="app.loadMore()" class="px-8 py-3.5 bg-white text-slate-700 font-bold text-sm rounded-2xl shadow-sm border border-slate-200/60 hover:bg-slate-50 active:scale-95 transition-all flex items-center gap-2">
+                        Cargar más campings <i class="fa-solid fa-chevron-down text-xs"></i>
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <div id="view-favorites" class="space-y-6 hidden">
+            <div class="flex items-center gap-2 border-b border-slate-200 pb-4">
+                <span class="text-2xl text-fomoCoral">❤️</span>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">Tus Campings Guardados</h2>
+            </div>
+            <div id="favs-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+            <div id="favs-empty-state" class="hidden text-center py-16 space-y-4">
+                <span class="text-5xl block">🌊</span>
+                <p class="text-slate-500 font-medium">Aún no tienes campings guardados para tus vacaciones.</p>
+                <button onclick="app.changeTab('home')" class="px-5 py-2.5 bg-marDark text-white font-bold text-xs rounded-xl shadow-md shadow-marDark/20">Explorar alojamientos</button>
+            </div>
+            <div class="flex justify-center mt-12 hidden" id="lazy-load-favs-container">
+                <button onclick="app.loadMoreFavs()" class="px-8 py-3.5 bg-white text-slate-700 font-bold text-sm rounded-2xl shadow-sm border border-slate-200/60 hover:bg-slate-50 transition-all">
+                    Cargar más favoritos
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div id="maps-modal" class="fixed inset-0 z-50 glass-modal flex items-center justify-center p-4 hidden">
+        <div class="bg-white w-full max-w-2xl rounded-3xl overflow-hidden shadow-2xl flex flex-col relative max-h-[90vh]">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 id="maps-modal-title" class="font-bold text-slate-800 flex items-center gap-2 text-sm"><i class="fa-solid fa-map-location-dot text-marDark"></i> Cómo llegar</h3>
+                <button onclick="app.closeMaps()" class="w-8 h-8 flex items-center justify-center bg-slate-200/60 hover:bg-slate-200 text-slate-600 rounded-full text-xs font-bold transition-all">&times;</button>
+            </div>
+            <div class="w-full aspect-video bg-slate-100" id="maps-iframe-container">
+                </div>
+        </div>
+    </div>
+
+    <div id="booking-modal" class="fixed inset-0 z-50 glass-modal flex flex-col items-center justify-center text-white text-center p-6 hidden">
+        <div class="relative w-72 h-44 flex items-center justify-center mb-6">
+            <div class="absolute w-14 h-14 rounded-full animate-sun top-6 left-1/2 -ml-7 z-0"></div>
+            <svg class="w-32 h-32 z-10 drop-shadow-lg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 80 L50 40 L85 80 Z" fill="#BB86FC" opacity="0.15" />
+                <path d="M20 80 L50 45 L80 80 Z" fill="#8D6E63" stroke="#5D4037" stroke-width="3" />
+                <path d="M50 45 L15 55 L20 80 L50 45 Z" fill="#A1887F" />
+                <path d="M40 80 L40 62 C40 58, 60 58, 60 62 L60 80 Z" fill="#FFE082" stroke="#FFB300" stroke-width="2" />
+                <line x1="10" y1="80" x2="90" y2="80" stroke="#4CAF50" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <div class="space-y-2 max-w-md">
+            <h3 class="text-2xl font-black text-mar tracking-wide flex items-center justify-center gap-2">
+                Abriendo camping... <i class="fa-solid fa-spinner animate-spin text-sm"></i>
+            </h3>
+            <p id="booking-random-msg" class="text-slate-200 font-medium text-sm italic tracking-wide px-4"></p>
+        </div>
+    </div>
+
+    <script>
+        // BASE DE DATOS LOCAL INTERNA COMPLETA (JSON)
+        const CAMPINGS_DATA = [
+            {
+                id: "camp-001",
+                nombre: "Camping Cala Llevadó",
+                etiqueta: "DESTACADO",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1478131143081-80f7f84ca84c?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=600&q=80"
+                ],
+                url_web: "https://www.calallevado.com",
+                url_reservar: "https://www.calallevado.com/booking",
+                telefono: "+34972340312",
+                desc_corta: "Acampada libre frente al mar de la Costa Brava, inmerso en un bosque centenario.",
+                desc_larga: "El Camping Cala Llevadó representa el sentido original del camping en plena naturaleza. Situado en Tossa de Mar, ofrece espectaculares parcelas con vistas a calas aisladas de agua cristalina y bungalows de madera eco-friendly.",
+                servicios: ["wc", "piscina", "wifi", "mascotas"],
+                coordenadas: "41.7176,2.9189",
+                valoracion: 4.8,
+                resenas_count: 512,
+                tipos: {
+                    parcela: { disponible: true, precio: 29, oferta: true, precio_oferta: 21 },
+                    bungalow: { disponible: true, precio: 110, oferta: false },
+                    cabana: { disponible: true, precio: 140, oferta: false }
+                }
+            },
+            {
+                id: "camp-002",
+                nombre: "Camping Picos de Europa",
+                etiqueta: "RECOMENDADO",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1478131143081-80f7f84ca84c?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80"
+                ],
+                url_web: "https://www.campingpicosdeeuropa.com",
+                url_reservar: "https://www.campingpicosdeeuropa.com/reserva",
+                telefono: "+34985846463",
+                desc_corta: "El refugio perfecto a los pies de las montañas de Asturias. Aire puro norteño.",
+                desc_larga: "Ubicado estratégicamente en Avín, cuenta con inmejorables servicios para montañeros y familias. Prados verdes inmensos para tu parcela y cabañas de piedra rústica perfectamente equipadas para las noches frescas.",
+                servicios: ["wc", "wifi", "mascotas"],
+                coordenadas: "43.3341,-4.9318",
+                valoracion: 4.5,
+                resenas_count: 324,
+                tipos: {
+                    parcela: { disponible: true, precio: 18, oferta: false },
+                    bungalow: { disponible: false },
+                    cabana: { disponible: true, precio: 85, oferta: true, precio_oferta: 68 }
+                }
+            },
+            {
+                id: "camp-003",
+                nombre: "Glamping Doñana Sanctuary",
+                etiqueta: "POPULAR",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1478131143081-80f7f84ca84c?auto=format&fit=crop&w=600&q=80"
+                ],
+                url_web: "https://www.donanasanctuary.com",
+                url_reservar: "https://www.donanasanctuary.com/book-now",
+                telefono: "+34959442412",
+                desc_corta: "Lujo salvaje andaluz rodeado de dunas, pinos y la mayor reserva de Europa.",
+                desc_larga: "Disfruta del Parque Nacional de Doñana con el confort de un hotel de cinco estrellas en cabañas de lona sofisticadas y cabañas de madera de diseño contemporáneo y caribeño.",
+                servicios: ["wc", "piscina", "wifi"],
+                coordenadas: "36.9864,-6.4283",
+                valoracion: 4.9,
+                resenas_count: 189,
+                tipos: {
+                    parcela: { disponible: false },
+                    bungalow: { disponible: true, precio: 150, oferta: false },
+                    cabana: { disponible: true, precio: 210, oferta: true, precio_oferta: 179 }
+                }
+            },
+            {
+                id: "camp-004",
+                nombre: "Camping Gavín Pirineos",
+                etiqueta: "DESTACADO",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1478131143081-80f7f84ca84c?auto=format&fit=crop&w=600&q=80"
+                ],
+                url_web: "https://www.campinggavin.com",
+                url_reservar: "https://www.campinggavin.com/reservas",
+                telefono: "+34974485084",
+                desc_corta: "Instalaciones de primer nivel en la entrada del místico Valle de Tena.",
+                desc_larga: "Camping en Huesca con piscinas climatizadas de verano, restaurante de montaña espectacular y parcelas escalonadas que garantizan sombra y vistas de postal pirenaica.",
+                servicios: ["wc", "piscina", "wifi", "mascotas"],
+                coordenadas: "42.6144,-0.3155",
+                valoracion: 4.7,
+                resenas_count: 840,
+                tipos: {
+                    parcela: { disponible: true, precio: 32, oferta: false },
+                    bungalow: { disponible: true, precio: 125, oferta: true, precio_oferta: 110 },
+                    cabana: { disponible: false }
+                }
+            },
+            {
+                id: "camp-005",
+                nombre: "Camping Cabo de Gata",
+                etiqueta: "POPULAR",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1478131143081-80f7f84ca84c?auto=format&fit=crop&w=600&q=80"
+                ],
+                url_web: "https://www.campingcabodegata.com",
+                url_reservar: "https://www.campingcabodegata.com/online",
+                telefono: "+34950386047",
+                desc_corta: "Silencio, sol infinito y playas vírgenes en un paraje volcánico único de Almería.",
+                desc_larga: "Ideal para desconectar del mundo. Despiértate rodeado de palmeras, cactus y dirígete andando a las calas más icónicas de la costa andaluza. Baños renovados con energía solar.",
+                servicios: ["wc", "piscina", "mascotas"],
+                coordenadas: "36.8142,-2.2415",
+                valoracion: 4.4,
+                resenas_count: 405,
+                tipos: {
+                    parcela: { disponible: true, precio: 22, oferta: true, precio_oferta: 18 },
+                    bungalow: { disponible: true, precio: 95, oferta: false },
+                    cabana: { disponible: false }
+                }
+            },
+            {
+                id: "camp-006",
+                nombre: "Eco-Resort Camping Bañoles",
+                etiqueta: "RECOMENDADO",
+                imagenes: [
+                    "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1478131143081-80f7f84ca84c?auto=format&fit=crop&w=600&q=80"
+                ],
+                url_web: "https://www.campingbanyoles.com",
+                url_reservar: "https://www.campingbanyoles.com/reserva",
+                telefono: "+34972570054",
+                desc_corta: "Sostenibilidad pura a las orillas del lago más grande de Cataluña.",
+                desc_larga: "Un camping boutique volcado en el medio ambiente. Actividades de kayak directas, baños secos de última tecnología de diseño y bungalows bioclimáticos de madera local.",
+                servicios: ["wc", "wifi"],
+                coordenadas: "42.1158,2.7561",
+                valoracion: 4.6,
+                resenas_count: 220,
+                tipos: {
+                    parcela: { disponible: true, precio: 25, oferta: false },
+                    bungalow: { disponible: true, precio: 115, oferta: true, precio_oferta: 99 },
+                    cabana: { disponible: true, precio: 130, oferta: false }
+                }
+            }
+        ];
+
+        // POOL DE MENSAJES ALEATORIOS DE RESERVA
+        const BOOKING_MESSAGES = [
+            "Los precios más refrescantes del verano.",
+            "Los mejores campings de España.",
+            "Descubre campings sorprendentes.",
+            "Estas vacaciones van a ser refrescantes."
+        ];
+
+        // ADMINISTRADOR DE TELEGRAM (Cambiar por tu username real de Telegram)
+        const TELEGRAM_ADMIN_USERNAME = "TuUsuarioTelegram";
+
+        // ESTADO GLOBAL DE LA APLICACIÓN
+        class CampVibesApp {
+            constructor() {
+                this.campings = [...CAMPINGS_DATA];
+                this.filteredCampings = [];
+                this.favorites = JSON.parse(localStorage.getItem('camp_favorites')) || [];
+                this.currentTypeFilter = 'todos';
+                this.activeTab = 'home';
+                
+                // Paginación Lazy Load (de 5 en 5)
+                this.homeLimit = 5;
+                this.favsLimit = 5;
+
+                // Carrusel imágenes activas de cada tarjeta
+                this.carouselStates = {};
+            }
+
+            init() {
+                this.initTelegramUser();
+                this.renderFeaturedCarousel();
+                this.filterCampings();
+                this.renderFavorites();
+            }
+
+            // SIMULACIÓN / API LOGIN TELEGRAM
+            initTelegramUser() {
+                let user = JSON.parse(localStorage.getItem('camp_tg_user'));
+                if (!user) {
+                    // Datos por defecto basados en requisitos de API Telegram
+                    user = {
+                        id: 77712345,
+                        first_name: "Álvaro",
+                        username: "veraneante_viajero",
+                        photo_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
+                    };
+                    localStorage.setItem('camp_tg_user', JSON.stringify(user));
+                }
+
+                const container = document.getElementById('telegram-profile-container');
+                container.innerHTML = `
+                    <div class="flex items-center gap-2 bg-slate-100/80 px-3 py-1.5 rounded-full border border-slate-200/40">
+                        <img src="${user.photo_url}" alt="Avatar" class="w-7 h-7 rounded-full object-cover ring-2 ring-mar">
+                        <div class="flex flex-col text-left leading-none">
+                            <span class="text-xs font-bold text-slate-800">${user.first_name}</span>
+                            <span class="text-[10px] text-slate-500">@${user.username}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // CONTROL DE PÁGINAS (TABS)
+            changeTab(tab) {
+                this.activeTab = tab;
+                document.getElementById('view-home').classList.toggle('hidden', tab !== 'home');
+                document.getElementById('view-favorites').classList.toggle('hidden', tab !== 'favorites');
+                
+                const btnHome = document.getElementById('nav-home');
+                const btnFavs = document.getElementById('nav-favorites');
+                
+                if(tab === 'home') {
+                    document.getElementById('nav-home').className = "text-marDark border-b-2 border-marDark pb-1 px-1 transition-all";
+                    document.getElementById('nav-favs').className = "text-slate-500 hover:text-fomoCoral pb-1 px-1 transition-all flex items-center gap-1";
+                } else {
+                    document.getElementById('nav-home').className = "text-slate-500 hover:text-marDark pb-1 px-1 transition-all";
+                    document.getElementById('nav-favs').className = "text-fomoCoral border-b-2 border-fomoCoral pb-1 px-1 transition-all flex items-center gap-1";
+                    this.renderFavorites();
+                }
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // GENERADOR DE NÚMERO FOMO DIARIO FIJO (Cambia a las 00:00 del cliente)
+            getFomoCount(id) {
+                const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                const seedString = id + today;
+                let hash = 0;
+                for (let i = 0; i < seedString.length; i++) {
+                    hash = seedString.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                const min = 3;
+                const max = 12;
+                return Math.abs(hash % (max - min + 1)) + min;
+            }
+
+            // COLOR DE ETIQUETA LLAMATIVA
+            getTagColorClass(tag) {
+                switch(tag.toUpperCase()) {
+                    case 'DESTACADO': return 'bg-amber-400 text-slate-900';
+                    case 'RECOMENDADO': return 'bg-sky-400 text-white';
+                    case 'POPULAR': return 'bg-fomoCoral text-white';
+                    default: return 'bg-slate-400 text-white';
+                }
+            }
+
+            // INTERCAMBIO FILTRO DE CATEGORÍA PRINCIPAL (REGLA DE ORO)
+            toggleTypeFilter(type) {
+                this.currentTypeFilter = type;
+                ['todos', 'parcela', 'bungalow', 'cabana'].forEach(t => {
+                    const btn = document.getElementById(`btn-type-${t}`);
+                    if(t === type) {
+                        btn.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-marDark text-white shadow-sm shadow-marDark/20 whitespace-nowrap";
+                    } else {
+                        btn.className = "px-4 py-2.5 rounded-xl text-xs font-bold transition-all bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap";
+                    }
+                });
+                this.homeLimit = 5; // Reset lazy load
+                this.filterCampings();
+            }
+
+            // ORDENACIÓN DIRECTA AL HACER CLIC EN LA ETIQUETA DE LA TARJETA
+            orderByBadge(tag) {
+                this.clearFilters();
+                this.filteredCampings = this.campings.filter(c => c.etiqueta.toUpperCase() === tag.toUpperCase());
+                document.getElementById('grid-title').innerText = `Campings Ordenados por: ${tag}`;
+                this.homeLimit = 5;
+                this.renderGrid();
+            }
+
+            // LIMPIAR TODOS LOS FILTROS
+            clearFilters() {
+                document.getElementById('search-input').value = '';
+                document.getElementById('filter-wc').checked = false;
+                document.getElementById('filter-piscina').checked = false;
+                document.getElementById('filter-oferta').checked = false;
+                document.getElementById('grid-title').innerText = "Campings en España";
+                this.toggleTypeFilter('todos');
+            }
+
+            // MOTOR DE FILTRADO AVANZADO Y BÚSQUEDA
+            filterCampings() {
+                const searchVal = document.getElementById('search-input').value.toLowerCase();
+                const checkWc = document.getElementById('filter-wc').checked;
+                const checkPiscina = document.getElementById('filter-piscina').checked;
+                const checkOferta = document.getElementById('filter-oferta').checked;
+
+                this.filteredCampings = this.campings.filter(camp => {
+                    // Texto
+                    const matchesText = camp.nombre.toLowerCase().includes(searchVal) || camp.desc_corta.toLowerCase().includes(searchVal);
+                    
+                    // Categoría / Tipo (Regla de oro)
+                    let matchesType = true;
+                    if(this.currentTypeFilter !== 'todos') {
+                        matchesType = camp.tipos[this.currentTypeFilter] && camp.tipos[this.currentTypeFilter].disponible;
+                    }
+
+                    // Servicios avanzados
+                    const matchesWc = !checkWc || camp.servicios.includes('wc');
+                    const matchesPiscina = !checkPiscina || camp.servicios.includes('piscina');
+
+                    // En Oferta
+                    let matchesOferta = true;
+                    if(checkOferta) {
+                        matchesOferta = Object.values(camp.tipos).some(t => t.oferta === true);
+                    }
+
+                    return matchesText && matchesType && matchesWc && matchesPiscina && matchesOferta;
+                });
+
+                this.renderGrid();
+            }
+
+            // RENDERIZADO CARRUSEL DESTACADOS
+            renderFeaturedCarousel() {
+                const carousel = document.getElementById('featured-carousel');
+                const featured = this.campings.filter(c => c.etiqueta === 'DESTACADO');
+                
+                carousel.innerHTML = featured.map(camp => `
+                    <div class="min-w-[280px] md:min-w-[320px] bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 snap-start flex-shrink-0 cursor-pointer" onclick="app.orderByBadge('DESTACADO')">
+                        <div class="relative h-40">
+                            <img src="${camp.imagenes[0]}" class="w-full h-full object-cover" alt="${camp.nombre}">
+                            <span class="absolute top-3 left-3 bg-amber-400 text-slate-900 font-extrabold text-[10px] px-2.5 py-1 rounded-md shadow-sm">🔥 ${camp.etiqueta}</span>
+                        </div>
+                        <div class="p-4">
+                            <h4 class="font-bold text-slate-800 text-sm truncate">${camp.nombre}</h4>
+                            <p class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                <i class="fa-solid fa-star text-amber-400"></i> ${camp.valoracion} (${camp.resenas_count} reseñas)
+                            </p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // MAQUETADOR DE LA SÚPER TARJETA DE CAMPING COMPLETA
+            createCardHTML(camp) {
+                const isFav = this.favorites.includes(camp.id);
+                const fomoPeople = this.getFomoCount(camp.id);
+                
+                // Carrusel interno de imágenes
+                if (!this.carouselStates[camp.id]) this.carouselStates[camp.id] = 0;
+                const activeImgIdx = this.carouselStates[camp.id];
+
+                // Render precios por tipo
+                let pricesHTML = '';
+                Object.keys(camp.tipos).forEach(tipoKey => {
+                    const tData = camp.tipos[tipoKey];
+                    if(tData.disponible) {
+                        let finalPriceHTML = `<span class="font-bold text-slate-700 text-xs">${tData.precio}€</span>`;
+                        let discountBadge = '';
+                        
+                        if(tData.oferta) {
+                            const discountPct = Math.round(((tData.precio - tData.precio_oferta) / tData.precio) * 100);
+                            discountBadge = `<span class="bg-emerald-100 text-emerald-600 text-[10px] font-black px-1.5 py-0.5 rounded-md animate-pulse">-${discountPct}%</span>`;
+                            finalPriceHTML = `
+                                <span class="line-through text-slate-400 text-[11px] mr-1">${tData.precio}€</span>
+                                <span class="font-extrabold text-emerald-500 text-sm">${tData.precio_oferta}€</span>
+                            `;
+                        }
+
+                        pricesHTML += `
+                            <div class="flex items-center justify-between bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-100">
+                                <span class="capitalize text-[11px] text-slate-500 font-medium">${tipoKey === 'cabana' ? '🪵 Cabaña' : tipoKey === 'bungalow' ? '🏡 Bungalow' : '🔲 Parcela'}</span>
+                                <div class="flex items-center gap-1.5">
+                                    ${discountBadge}
+                                    ${finalPriceHTML}
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+
+                // Tabla de servicios
+                const servicesListHTML = camp.servicios.map(s => {
+                    let icon = '⛺';
+                    if (s === 'wc') icon = '🚾 Baño';
+                    if (s === 'piscina') icon = '🏊 Piscina';
+                    if (s === 'wifi') icon = '📶 Wifi';
+                    if (s === 'mascotas') icon = '🐾 Mascotas';
+                    return `<span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-semibold text-[10px] flex items-center gap-1">${icon}</span>`;
+                }).join('');
+
+                return `
+                    <div class="bg-white rounded-[26px] overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col lazy-card" id="card-${camp.id}">
+                        <div class="relative h-56 w-full overflow-hidden group">
+                            <img src="${camp.imagenes[activeImgIdx]}" id="img-render-${camp.id}" class="w-full h-full object-cover transition-all duration-500" alt="${camp.nombre}">
+                            
+                            <button onclick="event.stopPropagation(); app.toggleFavorite('${camp.id}')" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/90 flex items-center justify-center shadow-md active:scale-90 transition-all z-20">
+                                <i class="${isFav ? 'fa-solid text-fomoCoral' : 'fa-regular text-slate-400'} fa-heart text-base"></i>
+                            </button>
+
+                            <button onclick="event.stopPropagation(); app.prevImage('${camp.id}')" class="absolute left-2 top-1/2 -mt-4 w-8 h-8 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button onclick="event.stopPropagation(); app.nextImage('${camp.id}')" class="absolute right-2 top-1/2 -mt-4 w-8 h-8 rounded-full bg-white/70 hover:bg-white flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-right"></i></button>
+                            
+                            <span class="absolute bottom-3 right-3 bg-black/50 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full font-medium z-20">${activeImgIdx + 1}/5</span>
+                        </div>
+
+                        <div class="p-5 flex-1 flex flex-col space-y-4">
+                            <div>
+                                <div class="flex items-start justify-between gap-2 mb-1">
+                                    <h3 class="font-extrabold text-slate-800 text-base leading-snug truncate">${camp.nombre}</h3>
+                                    <span onclick="app.orderByBadge('${camp.etiqueta}')" class="text-[9px] font-black tracking-wider px-2.5 py-1 rounded-md cursor-pointer ${this.getTagColorClass(camp.etiqueta)} transform hover:scale-105 transition-all shadow-sm flex-shrink-0">${camp.etiqueta}</span>
+                                </div>
+                                <div onclick="app.toggleDetails('${camp.id}')" class="flex items-center gap-1.5 text-xs text-slate-500 font-medium cursor-pointer hover:text-marDark transition-all">
+                                    <div class="text-amber-400 flex items-center"><i class="fa-solid fa-star"></i></div>
+                                    <span class="text-slate-700 font-bold">${camp.valoracion}</span>
+                                    <span class="underline">(${camp.resenas_count} opiniones)</span>
+                                </div>
+                            </div>
+
+                            <p class="text-xs text-slate-500 leading-relaxed">${camp.desc_corta}</p>
+
+                            <div class="bg-fomoCoral/10 px-3 py-2 rounded-xl flex items-center gap-2 text-fomoCoral font-bold text-[11px]">
+                                <i class="fa-solid fa-fire animate-bounce"></i>
+                                <span>${fomoPeople} personas agregaron este camping a favoritos hoy.</span>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                ${pricesHTML}
+                            </div>
+
+                            <div id="details-${camp.id}" class="details-content">
+                                <div class="pt-2 pb-4 space-y-3 border-t border-slate-100 mt-2">
+                                    <h5 class="text-xs font-bold text-slate-700">Sobre el alojamiento:</h5>
+                                    <p class="text-[11px] text-slate-500 leading-relaxed">${camp.desc_larga}</p>
+                                    <h5 class="text-xs font-bold text-slate-700 pt-1">Servicios del recinto:</h5>
+                                    <div class="flex flex-wrap gap-2">${servicesListHTML}</div>
+                                </div>
+                            </div>
+
+                            <button onclick="app.toggleDetails('${camp.id}')" id="btn-toggle-${camp.id}" class="w-full text-center text-xs font-bold text-slate-400 hover:text-slate-600 transition-all flex items-center justify-center gap-1">
+                                Ver detalles y servicios <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            </button>
+
+                            <div class="pt-2 grid grid-cols-2 gap-2">
+                                <button onclick="app.openMaps('${camp.nombre}', '${camp.coordenadas}')" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-map-pin text-marDark"></i> Cómo llegar
+                                </button>
+                                <button onclick="app.handlePhoneAction('${camp.telefono}')" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5 truncate">
+                                    <i class="fa-solid fa-phone text-teal-500"></i> Llamar / Copiar
+                                </button>
+                                <a href="${camp.url_web}" target="_blank" class="px-3 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-globe text-indigo-400"></i> Web oficial
+                                </a>
+                                <button onclick="app.openTelegramSupport('${camp.id}', '${camp.nombre}')" class="px-3 py-2.5 bg-sky-50 hover:bg-sky-100 text-sky-600 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-brands fa-telegram text-base"></i> Soporte
+                                </button>
+                                <button onclick="app.triggerBookingFlow('${camp.id}')" class="col-span-2 mt-1 py-3 bg-gradient-to-r from-marDark to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-extrabold text-sm rounded-xl shadow-md shadow-marDark/20 active:scale-[0.98] transition-all tracking-wide flex items-center justify-center gap-2">
+                                    Reservar Alojamiento <i class="fa-solid fa-umbrella-beach"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // RENDER REGLA DE ORO CON LAZY LOAD (HOME)
+            renderGrid() {
+                const grid = document.getElementById('campings-grid');
+                document.getElementById('results-count').innerText = `${this.filteredCampings.length} campings encontrados`;
+                
+                if (this.filteredCampings.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-medium text-sm">No hay campings que coincidan con los filtros de vacaciones 🏖️</div>`;
+                    document.getElementById('lazy-load-container').classList.add('hidden');
+                    return;
+                }
+
+                // Slice para Lazy Load manual de 5 en 5
+                const slicedData = this.filteredCampings.slice(0, this.homeLimit);
+                grid.innerHTML = slicedData.map(camp => this.createCardHTML(camp)).join('');
+
+                // Mostrar u ocultar botón de Cargar Más
+                const btnContainer = document.getElementById('lazy-load-container');
+                if (this.homeLimit >= this.filteredCampings.length) {
+                    btnContainer.classList.add('hidden');
+                } else {
+                    btnContainer.classList.remove('hidden');
+                }
+            }
+
+            loadMore() {
+                this.homeLimit += 5;
+                this.renderGrid();
+            }
+
+            // REGLA DE ORO CON LAZY LOAD (FAVORITOS)
+            renderFavorites() {
+                const grid = document.getElementById('favs-grid');
+                const emptyState = document.getElementById('favs-empty-state');
+                const favsData = this.campings.filter(c => this.favorites.includes(c.id));
+
+                if(favsData.length === 0) {
+                    grid.innerHTML = '';
+                    emptyState.classList.remove('hidden');
+                    document.getElementById('lazy-load-favs-container').classList.add('hidden');
+                    return;
+                }
+                
+                emptyState.classList.add('hidden');
+                const slicedFavs = favsData.slice(0, this.favsLimit);
+                grid.innerHTML = slicedFavs.map(camp => this.createCardHTML(camp)).join('');
+
+                const btnContainer = document.getElementById('lazy-load-favs-container');
+                if (this.favsLimit >= favsData.length) {
+                    btnContainer.classList.add('hidden');
+                } else {
+                    btnContainer.classList.remove('hidden');
+                }
+            }
+
+            loadMoreFavs() {
+                this.favsLimit += 5;
+                this.renderFavorites();
+            }
+
+            // SISTEMA LÓGICA DE FAVORITOS LOCALSTORAGE
+            toggleFavorite(id) {
+                if (this.favorites.includes(id)) {
+                    this.favorites = this.favorites.filter(favId => favId !== id);
+                } else {
+                    this.favorites.push(id);
+                }
+                localStorage.setItem('camp_favorites', JSON.stringify(this.favorites));
+                
+                // Actualizar vistas sincronizadas
+                this.filterCampings();
+                if(this.activeTab === 'favorites') this.renderFavorites();
+            }
+
+            // MANEJO INTERNO DE GALERÍA DE IMÁGENES POR TARJETA
+            nextImage(id) {
+                const camp = this.campings.find(c => c.id === id);
+                this.carouselStates[id] = (this.carouselStates[id] + 1) % camp.imagenes.length;
+                document.getElementById(`img-render-${id}`).src = camp.imagenes[this.carouselStates[id]];
+                document.querySelector(`#card-${id} span.bottom-3`).innerText = `${this.carouselStates[id] + 1}/5`;
+            }
+
+            prevImage(id) {
+                const camp = this.campings.find(c => c.id === id);
+                this.carouselStates[id] = (this.carouselStates[id] - 1 + camp.imagenes.length) % camp.imagenes.length;
+                document.getElementById(`img-render-${id}`).src = camp.imagenes[this.carouselStates[id]];
+                document.querySelector(`#card-${id} span.bottom-3`).innerText = `${this.carouselStates[id] + 1}/5`;
+            }
+
+            // EFECTO DESPLEGABLE ELEGANTE (ACORDEÓN SLIDE)
+            toggleDetails(id) {
+                const element = document.getElementById(`details-${id}`);
+                const btn = document.getElementById(`btn-toggle-${id}`);
+                const isOpening = !element.classList.contains('open');
+                
+                element.classList.toggle('open', isOpening);
+                btn.innerHTML = isOpening 
+                    ? `Ocultar información <i class="fa-solid fa-chevron-up text-[10px]"></i>` 
+                    : `Ver detalles y servicios <i class="fa-solid fa-chevron-down text-[10px]"></i>`;
+            }
+
+            // VENTANA FLOTANTE GOOGLE MAPS
+            openMaps(nombre, coordenadas) {
+                document.getElementById('maps-modal-title').innerHTML = `<i class="fa-solid fa-map-location-dot text-marDark"></i> Cómo llegar a ${nombre}`;
+                const container = document.getElementById('maps-iframe-container');
+                // Iframe Embed Limpio de Google Maps utilizando coordenadas
+                container.innerHTML = `
+                    <iframe class="w-full h-full border-none" src="https://maps.google.com/maps?q=${coordenadas}&z=14&output=embed" allowfullscreen="" loading="lazy"></iframe>
+                `;
+                document.getElementById('maps-modal').classList.remove('hidden');
+            }
+
+            closeMaps() {
+                document.getElementById('maps-modal').classList.add('hidden');
+                document.getElementById('maps-iframe-container').innerHTML = '';
+            }
+
+            // BLOQUE ACCIÓN TELÉFONO DUAL
+            handlePhoneAction(tlf) {
+                const action = confirm(`¿Qué deseas hacer con el teléfono (${tlf})?\n\nAceptar: Llamar de inmediato\nCancelar: Copiar al portapapeles`);
+                if(action) {
+                    window.location.href = `tel:${tlf}`;
+                } else {
+                    navigator.clipboard.writeText(tlf).then(() => {
+                        alert("¡Teléfono copiado con éxito al portapapeles! 📋");
+                    });
+                }
+            }
+
+            // REDIRECCIÓN ENLACE SOPORTE PRIVADO TELEGRAM
+            openTelegramSupport(id, nombre) {
+                const baseText = `Hola! Solicito soporte e información avanzada sobre el camping ${nombre} (ID: ${id}).`;
+                const encodedText = encodeURIComponent(baseText);
+                window.open(`https://t.me/${TELEGRAM_ADMIN_USERNAME}?text=${encodedText}`, '_blank');
+            }
+
+            // 5. MODAL DE RESERVA "SUMMER FLOW" (ANIMACIÓN DEL SOL Y REDIRECCIÓN 5 SEG)
+            triggerBookingFlow(id) {
+                const camp = this.campings.find(c => c.id === id);
+                const modal = document.getElementById('booking-modal');
+                const msgTextNode = document.getElementById('booking-random-msg');
+                
+                // Mensaje aleatorio del pool
+                const randomMsg = BOOKING_MESSAGES[Math.floor(Math.random() * BOOKING_MESSAGES.length)];
+                msgTextNode.innerText = `"${randomMsg}"`;
+                
+                // Desplegar modal flotante elegante blur
+                modal.classList.remove('hidden');
+
+                // Cronómetro de 5 segundos exactos para redirección final
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    window.open(camp.url_reservar, '_blank');
+                }, 5000);
+            }
+        }
+
+        // Instanciar e inicializar la aplicación completa al cargar
+        const app = new CampVibesApp();
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>

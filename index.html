@@ -76,6 +76,19 @@
                 transform: translateY(0);
             }
         }
+        /* Estilos personalizados para el buscador expandible */
+        #search-container {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 36px;
+        }
+        #search-container.expanded {
+            width: 100%;
+        }
+        @media (min-width: 768px) {
+            #search-container.expanded {
+                max-width: 320px;
+            }
+        }
     </style>
 </head>
 <body class="bg-arena text-slate-800 font-sans min-h-screen pb-24">
@@ -97,9 +110,20 @@
         <div id="view-home" class="space-y-6">
             <section class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-3">
                 <div class="flex items-center gap-2 flex-wrap md:flex-nowrap w-full">
-                    <div class="relative flex-1 min-w-[200px]">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                        <input type="text" id="search-input" oninput="app.filterCampings()" placeholder="Buscar camping por nombre, descripción, ciudad..." class="w-full pl-8 pr-3 py-1.5 bg-slate-50 rounded-xl border-none focus:outline-none focus:ring-2 focus:ring-marDark text-xs">
+                    
+                    <div id="search-container" class="relative h-8 bg-slate-50 rounded-xl flex items-center cursor-pointer overflow-hidden border border-transparent focus-within:ring-2 focus-within:ring-marDark" onclick="app.expandSearch()">
+                        <div class="w-9 h-8 flex items-center justify-center flex-shrink-0 text-slate-400">
+                            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                        </div>
+                        <input type="text" id="search-input" oninput="app.filterCampings()" onblur="app.collapseSearch()" placeholder="Buscar camping por nombre, descripción..." class="w-full pr-3 py-1.5 bg-transparent border-none focus:outline-none text-xs hidden opacity-0 transition-opacity duration-200">
+                    </div>
+
+                    <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl relative">
+                        <select id="location-select" onchange="app.onLocationSelectChange(this.value)" class="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer px-2 py-1 max-w-[160px]">
+                            <option value="todos">🇪🇸 Toda España</option>
+                            <optgroup label="Comunidades Autónomas" id="optgroup-comunidades"></optgroup>
+                            <optgroup label="Ciudades / Municipios" id="optgroup-ciudades"></optgroup>
+                        </select>
                     </div>
                     
                     <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
@@ -305,7 +329,7 @@
                 url_reservar: "https://www.calallevado.com/booking",
                 telefono: "+34972340312",
                 desc_corta: "Acampada libre frente al mar de la Costa Brava, inmerso en un bosque centenario.",
-                desc_larga: "El Camping Cala Llevadó representa el sentido original del camping en plena naturaleza. Situado en Tossa de Mar, ofrece espectaculares parcelas con vistas a calas aisladas de agua cristalina y bungalows de madera eco-friendly.",
+                desc_larga: "El Camping Cala Llevadó representa el sentido original del camping en plena naturaleza. Situado en Tossa de Mar, offers espectaculares parcelas con vistas a calas aisladas de agua cristalina y bungalows de madera eco-friendly.",
                 servicios: ["wc", "piscina", "wifi", "mascotas", "ninos"],
                 caracteristicas: { bar: true, tienda: true, parque: true, canchas: false, animacion: true },
                 coordenadas: "41.7176,2.9189",
@@ -498,10 +522,14 @@
                 // Estados de geolocalización
                 this.userLocation = null;
                 this.maxDistanceFilter = 500; 
+                
+                // Estado del selector de ubicación flotante
+                this.currentLocationFilter = 'todos';
             }
 
             init() {
                 this.initTelegramUser();
+                this.populateLocationSelector();
                 this.renderFeaturedCarousel();
                 this.filterCampings();
                 this.renderFavorites();
@@ -540,6 +568,77 @@
                         </div>
                     </div>
                 `;
+            }
+
+            // Llena de manera automatizada las opciones flotantes del selector de ubicaciones de España
+            populateLocationSelector() {
+                const comunidadesSet = new Set();
+                const ciudadesSet = new Set();
+
+                this.campings.forEach(c => {
+                    if (c.comunidad) comunidadesSet.add(c.comunidad);
+                    if (c.ciudad) ciudadesSet.add(c.ciudad);
+                });
+
+                const groupComunidades = document.getElementById('optgroup-comunidades');
+                const groupCiudades = document.getElementById('optgroup-ciudades');
+
+                groupComunidades.innerHTML = Array.from(comunidadesSet).sort().map(com => 
+                    `<option value="comunidad:${com}">📍 ${com}</option>`
+                ).join('');
+
+                groupCiudades.innerHTML = Array.from(ciudadesSet).sort().map(ciu => 
+                    `<option value="ciudad:${ciu}">🏙️ ${ciu}</option>`
+                ).join('');
+            }
+
+            // Manejador del cambio en el selector flotante de comunidades y ciudades
+            onLocationSelectChange(value) {
+                this.currentLocationFilter = value;
+                this.homeLimit = 5;
+                this.filterCampings();
+            }
+
+            // Acciones para expandir fluidamente el buscador
+            expandSearch() {
+                const container = document.getElementById('search-container');
+                const input = document.getElementById('search-input');
+                container.classList.add('expanded');
+                input.classList.remove('hidden');
+                setTimeout(() => {
+                    input.classList.remove('opacity-0');
+                    input.focus();
+                }, 100);
+            }
+
+            // Colapsar buscador si pierde el foco y no tiene contenido
+            collapseSearch() {
+                const container = document.getElementById('search-container');
+                const input = document.getElementById('search-input');
+                if (input.value.trim() === '') {
+                    input.classList.add('opacity-0');
+                    container.classList.remove('expanded');
+                    setTimeout(() => {
+                        input.classList.add('hidden');
+                    }, 200);
+                }
+            }
+
+            // Filtrar directamente al pulsar sobre la ubicación del camping
+            filterByDirectLocation(type, value) {
+                const select = document.getElementById('location-select');
+                const optionValue = `${type}:${value}`;
+                
+                // Forzar el valor en el select y el estado interno
+                select.value = optionValue;
+                this.currentLocationFilter = optionValue;
+                
+                // Reset de paginación y ejecución del filtrado
+                this.homeLimit = 5;
+                this.filterCampings();
+
+                // Scroll suave a la zona de listados
+                document.getElementById('grid-title').scrollIntoView({ behavior: 'smooth' });
             }
 
             // Integración nativa del API de localización de Telegram WebApp con fallback estándar
@@ -676,8 +775,11 @@
 
             clearFilters() {
                 document.getElementById('search-input').value = '';
+                this.collapseSearch();
                 document.getElementById('category-select').value = 'todos';
                 document.getElementById('environment-select').value = 'todos';
+                document.getElementById('location-select').value = 'todos';
+                this.currentLocationFilter = 'todos';
                 document.getElementById('filter-wc').checked = false;
                 document.getElementById('filter-piscina').checked = false;
                 document.getElementById('filter-oferta').checked = false;
@@ -744,6 +846,17 @@
                         matchesEnvironment = camp.entorno === environmentVal;
                     }
 
+                    // Lógica del filtro avanzado de ubicaciones flotantes (Comunidad / Ciudad)
+                    let matchesLocation = true;
+                    if (this.currentLocationFilter !== 'todos') {
+                        const [locType, locValue] = this.currentLocationFilter.split(':');
+                        if (locType === 'comunidad') {
+                            matchesLocation = camp.comunidad === locValue;
+                        } else if (locType === 'ciudad') {
+                            matchesLocation = camp.ciudad === locValue;
+                        }
+                    }
+
                     const matchesWc = !checkWc || camp.servicios.includes('wc');
                     const matchesPiscina = !checkPiscina || camp.servicios.includes('piscina');
                     const matchesMascotas = !checkMascotas || camp.servicios.includes('mascotas');
@@ -766,13 +879,18 @@
                         matchesDistance = camp._computedDist <= this.maxDistanceFilter;
                     }
 
-                    return matchesText && matchesType && matchesEnvironment && matchesWc && matchesPiscina && matchesOferta && matchesMascotas && matchesNinos && matchesWifi && matchesBar && matchesTienda && matchesParque && matchesCanchas && matchesAnimacion && matchesDistance;
+                    return matchesText && matchesType && matchesEnvironment && matchesLocation && matchesWc && matchesPiscina && matchesOferta && matchesMascotas && matchesNinos && matchesWifi && matchesBar && matchesTienda && matchesParque && matchesCanchas && matchesAnimacion && matchesDistance;
                 });
 
-                // Ordenación en tiempo real por menor distancia si la ubicación está activa
+                // Títulos inteligentes del grid de resultados según filtros aplicados
                 if (this.userLocation) {
                     this.filteredCampings.sort((a, b) => (a._computedDist || 0) - (b._computedDist || 0));
                     document.getElementById('grid-title').innerText = "Campings más cercanos a ti";
+                } else if (this.currentLocationFilter !== 'todos') {
+                    const [_, val] = this.currentLocationFilter.split(':');
+                    document.getElementById('grid-title').innerText = `Campings en ${val}`;
+                } else {
+                    document.getElementById('grid-title').innerText = "Campings en España";
                 }
 
                 this.renderGrid();
@@ -974,8 +1092,12 @@
                                     </div>
                                     ${liveDistanceBadge}
                                 </div>
-                                <div class="text-[11px] text-slate-400 font-semibold mt-1 flex items-center gap-1">
-                                    <i class="fa-solid fa-map-marker-alt text-slate-300"></i> ${camp.ciudad} (${camp.comunidad})
+                                <div class="text-[11px] text-slate-400 font-semibold mt-1 flex items-center gap-1 flex-wrap">
+                                    <i class="fa-solid fa-map-marker-alt text-slate-300"></i> 
+                                    <span onclick="app.filterByDirectLocation('ciudad', '${camp.ciudad}')" class="hover:text-marDark cursor-pointer underline transition-colors">${camp.ciudad}</span> 
+                                    <span class="text-slate-300 font-normal">(</span>
+                                    <span onclick="app.filterByDirectLocation('comunidad', '${camp.comunidad}')" class="hover:text-marDark cursor-pointer underline transition-colors">${camp.comunidad}</span>
+                                    <span class="text-slate-300 font-normal">)</span>
                                 </div>
                             </div>
 

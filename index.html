@@ -644,25 +644,25 @@
                 if (!this.carouselStates[camp.id]) this.carouselStates[camp.id] = 0;
                 const activeImgIdx = this.carouselStates[camp.id];
 
-                let pricesHTML = '<div class="grid grid-cols-1 gap-1.5 bg-slate-50 p-2 rounded-xl border border-slate-100">';
+                let pricesHTML = '<div class="flex flex-row gap-1.5 overflow-x-auto justify-between bg-slate-50 p-1.5 rounded-xl border border-slate-100 items-center">';
                 Object.keys(camp.tipos).forEach(tipoKey => {
                     const tData = camp.tipos[tipoKey];
                     if(tData.disponible) {
-                        let finalPriceHTML = `<div class="flex items-center gap-1"><span class="font-bold text-slate-800 text-xs">${tData.precio}€</span></div>`;
+                        let finalPriceHTML = `<span class="font-bold text-slate-800 text-[10px]">${tData.precio}€</span>`;
                         if(tData.oferta) {
                             const descuento = Math.round(((tData.precio - tData.precio_oferta) / tData.precio) * 100);
                             finalPriceHTML = `
-                                <div class="flex items-center gap-1.5 flex-wrap">
-                                    <span class="line-through text-slate-400 text-[11px]">${tData.precio}€</span>
-                                    <span class="font-extrabold text-emerald-500 text-xs">${tData.precio_oferta}€</span>
-                                    <span class="bg-emerald-100 text-emerald-700 font-bold text-[9px] px-1 rounded">-${descuento}%</span>
+                                <div class="flex items-center gap-1">
+                                    <span class="line-through text-slate-400 text-[9px]">${tData.precio}€</span>
+                                    <span class="font-extrabold text-emerald-500 text-[10px]">${tData.precio_oferta}€</span>
+                                    <span class="bg-emerald-100 text-emerald-700 font-bold text-[8px] px-0.5 rounded">-${descuento}%</span>
                                 </div>
                             `;
                         }
                         pricesHTML += `
-                            <div class="flex items-center justify-between text-xs py-0.5 border-b border-slate-200/50 last:border-0">
-                                <span class="text-slate-600 font-medium capitalize flex items-center gap-1">
-                                    ${tipoKey === 'cabana' ? '🪵' : tipoKey === 'bungalow' ? '🏡' : '🔲'} ${tipoKey}s
+                            <div class="flex flex-col items-center text-[10px] flex-1 min-w-[55px] border-r border-slate-200 last:border-0 px-1">
+                                <span class="text-slate-500 font-medium capitalize text-[9px] truncate">
+                                    ${tipoKey === 'cabana' ? '🪵' : tipoKey === 'bungalow' ? '🏡' : '🔲'} ${tipoKey}
                                 </span>
                                 ${finalPriceHTML}
                             </div>
@@ -804,20 +804,22 @@
                                 Ver más detalles <i class="fa-solid fa-chevron-down text-[8px]"></i>
                             </button>
 
-                            <div class="pt-1 grid grid-cols-2 gap-1.5">
-                                <button onclick="app.openMaps('${camp.nombre}', '${camp.coordenadas}')" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
-                                    <i class="fa-solid fa-map-pin text-marDark text-[10px]"></i> Llegar
-                                </button>
-                                <button onclick="app.handlePhoneAction('${camp.telefono}')" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1 truncate">
-                                    <i class="fa-solid fa-phone text-teal-500 text-[10px]"></i> Llamar
-                                </button>
-                                <a href="${camp.url_web}" target="_blank" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
-                                    <i class="fa-solid fa-globe text-indigo-400 text-[10px]"></i> Web
-                                </a>
-                                <button onclick="app.openTelegramSupport('${camp.id}', '${camp.nombre}')" class="px-2 py-2 bg-sky-50 hover:bg-sky-100 text-sky-600 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
-                                    <i class="fa-brands fa-telegram text-xs"></i> Soporte
-                                </button>
-                                <button onclick="app.triggerBookingFlow('${camp.id}')" class="col-span-2 mt-0.5 py-2.5 bg-gradient-to-r from-marDark to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-extrabold text-xs rounded-lg shadow-sm active:scale-[0.98] transition-all tracking-wide flex items-center justify-center gap-1.5">
+                            <div class="pt-1 flex flex-col space-y-1.5">
+                                <div id="extra-buttons-${camp.id}" class="grid grid-cols-2 gap-1.5 hidden">
+                                    <button onclick="app.openMaps('${camp.nombre}', '${camp.coordenadas}')" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-map-pin text-marDark text-[10px]"></i> Llegar
+                                    </button>
+                                    <button onclick="app.handlePhoneAction('${camp.telefono}')" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1 truncate">
+                                        <i class="fa-solid fa-phone text-teal-500 text-[10px]"></i> Llamar
+                                    </button>
+                                    <a href="${camp.url_web}" target="_blank" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
+                                        <i class="fa-solid fa-globe text-indigo-400 text-[10px]"></i> Web
+                                    </a>
+                                    <button onclick="app.openTelegramSupport('${camp.id}', '${camp.nombre}')" class="px-2 py-2 bg-sky-50 hover:bg-sky-100 text-sky-600 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
+                                        <i class="fa-brands fa-telegram text-xs"></i> Soporte
+                                    </button>
+                                </div>
+                                <button onclick="app.triggerBookingFlow('${camp.id}')" class="w-full mt-0.5 py-2.5 bg-gradient-to-r from-marDark to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-extrabold text-xs rounded-lg shadow-sm active:scale-[0.98] transition-all tracking-wide flex items-center justify-center gap-1.5">
                                     Reservar Alojamiento <i class="fa-solid fa-umbrella-beach text-xs"></i>
                                 </button>
                             </div>
@@ -908,10 +910,15 @@
 
             toggleDetails(id) {
                 const element = document.getElementById(`details-${id}`);
+                const extraBtnContainer = document.getElementById(`extra-buttons-${id}`);
                 const btn = document.getElementById(`btn-toggle-${id}`);
                 const isOpening = !element.classList.contains('open');
                 
                 element.classList.toggle('open', isOpening);
+                if (extraBtnContainer) {
+                    extraBtnContainer.classList.toggle('hidden', !isOpening);
+                }
+                
                 btn.innerHTML = isOpening 
                     ? `Ocultar detalles <i class="fa-solid fa-chevron-up text-[8px]"></i>` 
                     : `Ver más detalles <i class="fa-solid fa-chevron-down text-[8px]"></i>`;

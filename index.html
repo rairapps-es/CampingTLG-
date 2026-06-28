@@ -61,7 +61,7 @@
             transition: max-height 0.4s ease-out;
         }
         .details-content.open {
-            max-height: 1000px;
+            max-height: 1200px;
             transition: max-height 0.5s ease-in;
         }
         .lazy-card {
@@ -112,7 +112,7 @@
                 <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
                     <select id="environment-select" onchange="app.filterCampings()" class="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer px-2 py-1">
                         <option value="todos">🏞️ Todo Entorno</option>
-                        <option value="playa">🏖️ Playa</option>
+                        <option value="playa">🏖️ Costa / Playa</option>
                         <option value="montaña">⛰️ Montaña</option>
                     </select>
                 </div>
@@ -125,26 +125,44 @@
             </section>
 
             <div id="filter-modal" class="fixed inset-0 z-50 glass-modal flex items-center justify-center p-4 hidden">
-                <div class="bg-white w-full max-w-sm rounded-2xl overflow-hidden shadow-2xl p-5 space-y-4">
+                <div class="bg-white w-full max-w-md rounded-2xl overflow-hidden shadow-2xl p-5 space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-100 pb-2">
                         <h3 class="font-bold text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-sliders text-marDark"></i> Filtros Avanzados</h3>
                         <button onclick="app.toggleFilterModal(false)" class="w-6 h-6 flex items-center justify-center bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-full text-xs font-bold">×</button>
                     </div>
-                    <div class="flex flex-col gap-3 text-xs text-slate-600">
-                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
-                            <input type="checkbox" id="filter-wc" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🚾 Baños Premium
-                        </label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-600 max-h-[60vh] overflow-y-auto pr-1">
                         <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
                             <input type="checkbox" id="filter-piscina" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🏊 Piscina
                         </label>
                         <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-mascotas" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🐾 Admiten Mascotas
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-wc" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🚾 Baños Premium
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-wifi" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 📶 Conexión WiFi
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-ninos" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 👶 Espacio Niños
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-bar" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🍺 Servicio de Bar
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-tienda" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🛒 Tienda / Súper
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-parque" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🛝 Parque Infantil
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-canchas" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> ⚽ Canchas Deporte
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
+                            <input type="checkbox" id="filter-animacion" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🎉 Animación Verano
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
                             <input type="checkbox" id="filter-oferta" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🏷️ En Oferta
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
-                            <input type="checkbox" id="filter-mascotas" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 🐾 Acepta Mascotas
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer bg-slate-50 p-2.5 rounded-xl hover:bg-slate-100 transition-all">
-                            <input type="checkbox" id="filter-ninos" onchange="app.filterCampings()" class="rounded text-marDark focus:ring-marDark w-4 h-4"> 👶 Recomendado para Niños
                         </label>
                     </div>
                     <button onclick="app.toggleFilterModal(false)" class="w-full py-2 bg-marDark text-white text-xs font-bold rounded-xl shadow-md shadow-marDark/20">Aplicar Filtros</button>
@@ -288,7 +306,7 @@
                 nombre: "Camping Picos de Europa",
                 etiqueta: "RECOMENDADO",
                 entorno: "montaña",
-                distancia: "Playa a 32km (Llanes)",
+                distancia: "A pie de montaña (0m)",
                 imagenes: [
                     "https://images.unsplash.com/photo-1478131143081-80f7f84ca84c?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
@@ -346,7 +364,7 @@
                 nombre: "Camping Gavín Pirineos",
                 etiqueta: "DESTACADO",
                 entorno: "montaña",
-                distancia: "Montaña - Valle de Tena",
+                distancia: "A pie de montaña (0m)",
                 imagenes: [
                     "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
@@ -404,7 +422,7 @@
                 nombre: "Eco-Resort Camping Bañoles",
                 etiqueta: "RECOMENDADO",
                 entorno: "montaña",
-                distancia: "Montaña junto al Lago",
+                distancia: "A pie de montaña (0m)",
                 imagenes: [
                     "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
@@ -557,6 +575,12 @@
                 document.getElementById('filter-oferta').checked = false;
                 document.getElementById('filter-mascotas').checked = false;
                 document.getElementById('filter-ninos').checked = false;
+                document.getElementById('filter-wifi').checked = false;
+                document.getElementById('filter-bar').checked = false;
+                document.getElementById('filter-tienda').checked = false;
+                document.getElementById('filter-parque').checked = false;
+                document.getElementById('filter-canchas').checked = false;
+                document.getElementById('filter-animacion').checked = false;
                 document.getElementById('grid-title').innerText = "Campings en España";
                 this.currentTypeFilter = 'todos';
                 this.homeLimit = 5;
@@ -571,6 +595,12 @@
                 const checkOferta = document.getElementById('filter-oferta').checked;
                 const checkMascotas = document.getElementById('filter-mascotas').checked;
                 const checkNinos = document.getElementById('filter-ninos').checked;
+                const checkWifi = document.getElementById('filter-wifi').checked;
+                const checkBar = document.getElementById('filter-bar').checked;
+                const checkTienda = document.getElementById('filter-tienda').checked;
+                const checkParque = document.getElementById('filter-parque').checked;
+                const checkCanchas = document.getElementById('filter-canchas').checked;
+                const checkAnimacion = document.getElementById('filter-animacion').checked;
 
                 this.filteredCampings = this.campings.filter(camp => {
                     const matchesText = camp.nombre.toLowerCase().includes(searchVal) || camp.desc_corta.toLowerCase().includes(searchVal);
@@ -589,13 +619,20 @@
                     const matchesPiscina = !checkPiscina || camp.servicios.includes('piscina');
                     const matchesMascotas = !checkMascotas || camp.servicios.includes('mascotas');
                     const matchesNinos = !checkNinos || camp.servicios.includes('ninos');
+                    const matchesWifi = !checkWifi || camp.servicios.includes('wifi');
+                    
+                    const matchesBar = !checkBar || camp.caracteristicas.bar;
+                    const matchesTienda = !checkTienda || camp.caracteristicas.tienda;
+                    const matchesParque = !checkParque || camp.caracteristicas.parque;
+                    const matchesCanchas = !checkCanchas || camp.caracteristicas.canchas;
+                    const matchesAnimacion = !checkAnimacion || camp.caracteristicas.animacion;
 
                     let matchesOferta = true;
                     if(checkOferta) {
                         matchesOferta = Object.values(camp.tipos).some(t => t.oferta === true);
                     }
 
-                    return matchesText && matchesType && matchesEnvironment && matchesWc && matchesPiscina && matchesOferta && matchesMascotas && matchesNinos;
+                    return matchesText && matchesType && matchesEnvironment && matchesWc && matchesPiscina && matchesOferta && matchesMascotas && matchesNinos && matchesWifi && matchesBar && matchesTienda && matchesParque && matchesCanchas && matchesAnimacion;
                 });
 
                 this.renderGrid();
@@ -614,7 +651,7 @@
                         <div class="p-2">
                             <h4 class="font-bold text-slate-800 text-xs truncate">${camp.nombre}</h4>
                             <p class="text-[10px] text-slate-500 flex items-center gap-1">
-                                <i class="fa-solid fa-star text-amber-400"></i> ${camp.valoracion} <span class="text-slate-400 font-normal">(${camp.entorno === 'playa' ? '🏖️ Playa' : '⛰️ Montaña'})</span>
+                                <i class="fa-solid fa-star text-amber-400"></i> ${camp.valoracion} <span class="text-slate-400 font-normal">(${camp.entorno === 'playa' ? '🏖️ Costa' : '⛰️ Montaña'})</span>
                             </p>
                         </div>
                     </div>
@@ -696,7 +733,7 @@
                     serviciosTableHTML += `
                         <td class="p-2 border-b border-slate-100 ${idx % 2 === 0 ? 'border-r' : ''} w-1/2">
                             <div class="flex justify-between items-center gap-1">
-                                <span class="text-slate-600">${label}</span>
+                                <span class="text-slate-600 text-[10px] sm:text-[11px]">${label}</span>
                                 ${checkElement}
                             </div>
                         </td>
@@ -709,7 +746,7 @@
                     <div class="mt-2 border border-slate-100 rounded-xl overflow-hidden shadow-2xs">
                         <div class="bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-600 tracking-wider uppercase flex justify-between items-center">
                             <span>Instalaciones y Entorno</span>
-                            <span class="text-[9px] bg-marDark text-white px-1.5 py-0.2 rounded-md font-bold uppercase">${camp.entorno === 'playa' ? '🏖️ Costa' : '⛰️ Interior'}</span>
+                            <span class="text-[9px] bg-marDark text-white px-1.5 py-0.2 rounded-md font-bold uppercase">${camp.entorno === 'playa' ? '🏖️ Costa' : '⛰️ Montaña'}</span>
                         </div>
                         <table class="w-full text-left text-[11px] bg-white">
                             <tbody>
@@ -733,7 +770,7 @@
                     caracteristicasTableHTML += `
                         <td class="p-2 border-b border-slate-100 ${idx % 2 === 0 ? 'border-r' : ''} w-1/2">
                             <div class="flex justify-between items-center gap-1">
-                                <span class="text-slate-600">${label}</span>
+                                <span class="text-slate-600 text-[10px] sm:text-[11px]">${label}</span>
                                 ${checkElement}
                             </div>
                         </td>
@@ -792,37 +829,39 @@
 
                             ${pricesHTML}
 
+                            <div class="grid grid-cols-2 gap-2 pt-1">
+                                <button onclick="app.toggleDetails('${camp.id}')" id="btn-toggle-${camp.id}" class="w-full text-center text-[10px] font-black text-slate-500 hover:text-slate-700 transition-all uppercase tracking-wider flex items-center justify-center gap-1 py-2.5 bg-slate-100 rounded-lg hover:bg-slate-200">
+                                    Detalles <i class="fa-solid fa-chevron-down text-[8px]"></i>
+                                </button>
+                                <button onclick="app.triggerBookingFlow('${camp.id}')" class="w-full py-2.5 bg-gradient-to-r from-marDark to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-extrabold text-[11px] rounded-lg shadow-sm active:scale-[0.98] transition-all tracking-wide flex items-center justify-center gap-1">
+                                    Reservar <i class="fa-solid fa-umbrella-beach text-[10px]"></i>
+                                </button>
+                            </div>
+
                             <div id="details-${camp.id}" class="details-content">
-                                <div class="pt-1 pb-1 border-t border-slate-100 mt-1 space-y-1">
+                                <div class="pt-2 pb-1 border-t border-slate-100 mt-1 space-y-2">
                                     <p class="text-[11px] text-slate-500 leading-relaxed bg-slate-50 p-2 rounded-lg mb-1">${camp.desc_larga}</p>
+                                    
+                                    <div id="extra-buttons-${camp.id}" class="grid grid-cols-2 gap-1.5">
+                                        <button onclick="app.openMaps('${camp.nombre}', '${camp.coordenadas}')" class="px-2 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1 border border-slate-200/60">
+                                            <i class="fa-solid fa-map-pin text-marDark text-[10px]"></i> Llegar
+                                        </button>
+                                        <button onclick="app.handlePhoneAction('${camp.telefono}')" class="px-2 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1 truncate border border-slate-200/60">
+                                            <i class="fa-solid fa-phone text-teal-500 text-[10px]"></i> Llamar
+                                        </button>
+                                        <a href="${camp.url_web}" target="_blank" class="px-2 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1 border border-slate-200/60">
+                                            <i class="fa-solid fa-globe text-indigo-400 text-[10px]"></i> Web
+                                        </a>
+                                        <button onclick="app.openTelegramSupport('${camp.id}', '${camp.nombre}')" class="px-2 py-2 bg-sky-50 hover:bg-sky-100 text-sky-600 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
+                                            <i class="fa-brands fa-telegram text-xs"></i> Soporte
+                                        </button>
+                                    </div>
+
                                     ${serviciosTableHTML}
                                     ${caracteristicasTableHTML}
                                 </div>
                             </div>
 
-                            <button onclick="app.toggleDetails('${camp.id}')" id="btn-toggle-${camp.id}" class="w-full text-center text-[10px] font-black text-slate-400 hover:text-slate-600 transition-all uppercase tracking-wider flex items-center justify-center gap-1 py-1 bg-slate-50 rounded-lg hover:bg-slate-100">
-                                Ver más detalles <i class="fa-solid fa-chevron-down text-[8px]"></i>
-                            </button>
-
-                            <div class="pt-1 flex flex-col space-y-1.5">
-                                <div id="extra-buttons-${camp.id}" class="grid grid-cols-2 gap-1.5 hidden">
-                                    <button onclick="app.openMaps('${camp.nombre}', '${camp.coordenadas}')" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
-                                        <i class="fa-solid fa-map-pin text-marDark text-[10px]"></i> Llegar
-                                    </button>
-                                    <button onclick="app.handlePhoneAction('${camp.telefono}')" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1 truncate">
-                                        <i class="fa-solid fa-phone text-teal-500 text-[10px]"></i> Llamar
-                                    </button>
-                                    <a href="${camp.url_web}" target="_blank" class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
-                                        <i class="fa-solid fa-globe text-indigo-400 text-[10px]"></i> Web
-                                    </a>
-                                    <button onclick="app.openTelegramSupport('${camp.id}', '${camp.nombre}')" class="px-2 py-2 bg-sky-50 hover:bg-sky-100 text-sky-600 font-bold text-[11px] rounded-lg transition-all flex items-center justify-center gap-1">
-                                        <i class="fa-brands fa-telegram text-xs"></i> Soporte
-                                    </button>
-                                </div>
-                                <button onclick="app.triggerBookingFlow('${camp.id}')" class="w-full mt-0.5 py-2.5 bg-gradient-to-r from-marDark to-teal-500 hover:from-blue-600 hover:to-teal-600 text-white font-extrabold text-xs rounded-lg shadow-sm active:scale-[0.98] transition-all tracking-wide flex items-center justify-center gap-1.5">
-                                    Reservar Alojamiento <i class="fa-solid fa-umbrella-beach text-xs"></i>
-                                </button>
-                            </div>
                         </div>
                     </div>
                 `;
@@ -910,18 +949,14 @@
 
             toggleDetails(id) {
                 const element = document.getElementById(`details-${id}`);
-                const extraBtnContainer = document.getElementById(`extra-buttons-${id}`);
                 const btn = document.getElementById(`btn-toggle-${id}`);
                 const isOpening = !element.classList.contains('open');
                 
                 element.classList.toggle('open', isOpening);
-                if (extraBtnContainer) {
-                    extraBtnContainer.classList.toggle('hidden', !isOpening);
-                }
                 
                 btn.innerHTML = isOpening 
-                    ? `Ocultar detalles <i class="fa-solid fa-chevron-up text-[8px]"></i>` 
-                    : `Ver más detalles <i class="fa-solid fa-chevron-down text-[8px]"></i>`;
+                    ? `Ocultar <i class="fa-solid fa-chevron-up text-[8px]"></i>` 
+                    : `Detalles <i class="fa-solid fa-chevron-down text-[8px]"></i>`;
             }
 
             openMaps(nombre, coordenadas) {

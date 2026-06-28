@@ -33,7 +33,6 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
         }
-        /* Animación del ciclo del sol sobre la cabaña (5 segundos) */
         @keyframes sunArc {
             0% {
                 transform: translate(-150px, 80px) scale(0.8);
@@ -56,7 +55,6 @@
         .animate-sun {
             animation: sunArc 5s linear infinite;
         }
-        /* Estilos personalizados para transiciones de acordeón */
         .details-content {
             max-height: 0;
             overflow: hidden;
@@ -66,7 +64,6 @@
             max-height: 1000px;
             transition: max-height 0.5s ease-in;
         }
-        /* Lazy load e imágenes */
         .lazy-card {
             opacity: 0;
             transform: translateY(20px);
@@ -80,7 +77,7 @@
         }
     </style>
 </head>
-<body class="bg-arena text-slate-800 font-sans min-h-screen pb-12">
+<body class="bg-arena text-slate-800 font-sans min-h-screen pb-24">
 
     <header class="glass-header sticky top-0 z-50 border-b border-white/40 shadow-sm transition-all">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -89,13 +86,6 @@
                 <h1 class="text-xl font-black bg-gradient-to-r from-marDark to-teal-500 bg-clip-text text-transparent tracking-tight">CampVibes ES</h1>
             </div>
             
-            <nav class="flex items-center gap-6 font-medium text-sm">
-                <button id="nav-home" onclick="app.changeTab('home')" class="text-marDark border-b-2 border-marDark pb-1 px-1 transition-all">Explorar</button>
-                <button id="nav-favs" onclick="app.changeTab('favorites')" class="text-slate-500 hover:text-fomoCoral pb-1 px-1 transition-all flex items-center gap-1">
-                    Favs <i class="fa-solid fa-heart text-xs text-fomoCoral"></i>
-                </button>
-            </nav>
-
             <div id="telegram-profile-container" class="flex items-center gap-3">
             </div>
         </div>
@@ -116,6 +106,14 @@
                         <option value="parcela">🔲 Parcelas</option>
                         <option value="bungalow">🏡 Bungalows</option>
                         <option value="cabana">🪵 Cabañas</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-xl">
+                    <select id="environment-select" onchange="app.filterCampings()" class="bg-transparent text-xs font-bold text-slate-600 focus:outline-none cursor-pointer px-2 py-1">
+                        <option value="todos">🏞️ Todo Entorno</option>
+                        <option value="playa">🏖️ Playa</option>
+                        <option value="montaña">⛰️ Montaña</option>
                     </select>
                 </div>
 
@@ -208,13 +206,18 @@
             </div>
             <div class="w-full aspect-video bg-slate-100" id="maps-iframe-container">
             </div>
-            <div class="p-3 bg-slate-50 border-t border-slate-100 flex gap-2 justify-end">
-                <button id="btn-copy-coords" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1">
-                    <i class="fa-regular fa-copy"></i> Copiar Dirección
+            <div class="p-3 bg-slate-50 border-t border-slate-100 flex gap-2 justify-between items-center flex-wrap">
+                <button onclick="app.closeMaps()" class="px-3 py-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1">
+                    <i class="fa-solid fa-xmark"></i> Cerrar mapa
                 </button>
-                <button id="btn-open-gmaps" class="px-3 py-1.5 bg-marDark text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1 shadow-sm">
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Google Maps
-                </button>
+                <div class="flex gap-2">
+                    <button id="btn-copy-coords" class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold text-xs rounded-xl transition-all flex items-center gap-1">
+                        <i class="fa-regular fa-copy"></i> Copiar Dirección
+                    </button>
+                    <button id="btn-open-gmaps" class="px-3 py-1.5 bg-marDark text-white font-bold text-xs rounded-xl transition-all flex items-center gap-1 shadow-sm">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Abrir Google Maps
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -238,12 +241,25 @@
         </div>
     </div>
 
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-slate-200 h-16 shadow-lg z-50 flex items-center justify-around max-w-7xl mx-auto rounded-t-2xl">
+        <button id="tab-btn-home" onclick="app.changeTab('home')" class="flex flex-col items-center justify-center w-1/2 h-full text-marDark font-black transition-all">
+            <i class="fa-solid fa-compass text-lg mb-0.5"></i>
+            <span class="text-[11px] tracking-wide uppercase">Explorar</span>
+        </button>
+        <button id="tab-btn-favs" onclick="app.changeTab('favorites')" class="flex flex-col items-center justify-center w-1/2 h-full text-slate-400 font-bold hover:text-fomoCoral transition-all">
+            <i class="fa-solid fa-heart text-lg mb-0.5"></i>
+            <span class="text-[11px] tracking-wide uppercase">Mis Favoritos</span>
+        </button>
+    </nav>
+
     <script>
         const CAMPINGS_DATA = [
             {
                 id: "camp-001",
                 nombre: "Camping Cala Llevadó",
                 etiqueta: "DESTACADO",
+                entorno: "playa",
+                distancia: "A pie de playa (0m)",
                 imagenes: [
                     "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?auto=format&fit=crop&w=600&q=80",
@@ -257,6 +273,7 @@
                 desc_corta: "Acampada libre frente al mar de la Costa Brava, inmerso en un bosque centenario.",
                 desc_larga: "El Camping Cala Llevadó representa el sentido original del camping en plena naturaleza. Situado en Tossa de Mar, ofrece espectaculares parcelas con vistas a calas aisladas de agua cristalina y bungalows de madera eco-friendly.",
                 servicios: ["wc", "piscina", "wifi", "mascotas", "ninos"],
+                caracteristicas: { bar: true, tienda: true, parque: true, canchas: false, animacion: true },
                 coordenadas: "41.7176,2.9189",
                 valoracion: 4.8,
                 resenas_count: 512,
@@ -270,6 +287,8 @@
                 id: "camp-002",
                 nombre: "Camping Picos de Europa",
                 etiqueta: "RECOMENDADO",
+                entorno: "montaña",
+                distancia: "Playa a 32km (Llanes)",
                 imagenes: [
                     "https://images.unsplash.com/photo-1478131143081-80f7f84ca84c?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
@@ -283,6 +302,7 @@
                 desc_corta: "El refugio perfecto a los pies de las montañas de Asturias. Aire puro norteño.",
                 desc_larga: "Ubicado estratégicamente en Avín, cuenta con inmejorables servicios para montañeros y familias. Prados verdes inmensos para tu parcela y cabañas de piedra rústica perfectamente equipadas para las noches frescas.",
                 servicios: ["wc", "wifi", "mascotas", "ninos"],
+                caracteristicas: { bar: true, tienda: true, parque: true, canchas: true, animacion: false },
                 coordenadas: "43.3341,-4.9318",
                 valoracion: 4.5,
                 resenas_count: 324,
@@ -296,6 +316,8 @@
                 id: "camp-003",
                 nombre: "Glamping Doñana Sanctuary",
                 etiqueta: "POPULAR",
+                entorno: "playa",
+                distancia: "Playa a 1.5km (Matalascañas)",
                 imagenes: [
                     "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
@@ -309,6 +331,7 @@
                 desc_corta: "Lujo salvaje andaluz rodeado de dunas, pinos y la mayor reserva de Europa.",
                 desc_larga: "Disfruta del Parque Nacional de Doñana con el confort de un hotel de cinco estrellas en cabañas de lona sofisticadas y cabañas de madera de diseño contemporáneo y caribeño.",
                 servicios: ["wc", "piscina", "wifi"],
+                caracteristicas: { bar: true, tienda: false, parque: true, canchas: false, animacion: true },
                 coordenadas: "36.9864,-6.4283",
                 valoracion: 4.9,
                 resenas_count: 189,
@@ -322,6 +345,8 @@
                 id: "camp-004",
                 nombre: "Camping Gavín Pirineos",
                 etiqueta: "DESTACADO",
+                entorno: "montaña",
+                distancia: "Montaña - Valle de Tena",
                 imagenes: [
                     "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
@@ -335,6 +360,7 @@
                 desc_corta: "Instalaciones de primer nivel en la entrada del místico Valle de Tena.",
                 desc_larga: "Camping en Huesca con piscinas climatizadas de verano, restaurante de montaña espectacular y parcelas escalonadas que garantizan sombra y vistas de postal pirenaica.",
                 servicios: ["wc", "piscina", "wifi", "mascotas", "ninos"],
+                caracteristicas: { bar: true, tienda: true, parque: true, canchas: true, animacion: true },
                 coordenadas: "42.6144,-0.3155",
                 valoracion: 4.7,
                 resenas_count: 840,
@@ -348,6 +374,8 @@
                 id: "camp-005",
                 nombre: "Camping Cabo de Gata",
                 etiqueta: "POPULAR",
+                entorno: "playa",
+                distancia: "Playa a 400m",
                 imagenes: [
                     "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
@@ -361,6 +389,7 @@
                 desc_corta: "Silencio, sol infinito y playas vírgenes en un paraje volcánico único de Almería.",
                 desc_larga: "Ideal para desconectar del mundo. Despiértate rodeado de palmeras, cactus y dirígete andando a las calas más icónicas de la costa andaluza. Baños renovados con energía solar.",
                 servicios: ["wc", "piscina", "mascotas"],
+                caracteristicas: { bar: true, tienda: true, parque: false, canchas: false, animacion: false },
                 coordenadas: "36.8142,-2.2415",
                 valoracion: 4.4,
                 resenas_count: 405,
@@ -374,6 +403,8 @@
                 id: "camp-006",
                 nombre: "Eco-Resort Camping Bañoles",
                 etiqueta: "RECOMENDADO",
+                entorno: "montaña",
+                distancia: "Montaña junto al Lago",
                 imagenes: [
                     "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=600&q=80",
                     "https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?auto=format&fit=crop&w=600&q=80",
@@ -387,6 +418,7 @@
                 desc_corta: "Sostenibilidad pura a las orillas del lago más grande de Cataluña.",
                 desc_larga: "Un camping boutique volcado en el medio ambiente. Actividades de kayak directas, baños secos de última tecnología de diseño y bungalows bioclimáticos de madera local.",
                 servicios: ["wc", "wifi", "ninos"],
+                caracteristicas: { bar: true, tienda: true, parque: true, canchas: false, animacion: false },
                 coordenadas: "42.1158,2.7561",
                 valoracion: 4.6,
                 resenas_count: 220,
@@ -429,7 +461,6 @@
 
             initTelegramUser() {
                 let user;
-                // Intentar leer de la API oficial de Telegram WebApp si está inyectada en el entorno
                 if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
                     user = window.Telegram.WebApp.initDataUnsafe.user;
                 } else {
@@ -448,11 +479,11 @@
 
                 const container = document.getElementById('telegram-profile-container');
                 container.innerHTML = `
-                    <div class="flex items-center gap-2 bg-slate-100/80 px-3 py-1.5 rounded-full border border-slate-200/40">
-                        <img src="${user.photo_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" alt="Avatar" class="w-7 h-7 rounded-full object-cover ring-2 ring-mar">
-                        <div class="flex flex-col text-left leading-none">
-                            <span class="text-xs font-bold text-slate-800">${user.first_name || 'Usuario'}</span>
-                            <span class="text-[10px] text-slate-500">ID: ${user.id || '@' + user.username}</span>
+                    <div class="flex items-center gap-2 bg-slate-100/80 px-3 py-1.5 rounded-full border border-slate-200/40 shadow-sm">
+                        <img src="${user.photo_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80'}" alt="Avatar" class="w-8 h-8 rounded-full object-cover ring-2 ring-mar">
+                        <div class="flex flex-col text-left leading-tight">
+                            <span class="text-xs font-black text-slate-800">${user.first_name || 'Usuario'} <span class="text-slate-400 font-normal">@${user.username || 'sin_user'}</span></span>
+                            <span class="text-[9px] font-mono text-slate-500">ID: ${user.id}</span>
                         </div>
                     </div>
                 `;
@@ -463,12 +494,15 @@
                 document.getElementById('view-home').classList.toggle('hidden', tab !== 'home');
                 document.getElementById('view-favorites').classList.toggle('hidden', tab !== 'favorites');
                 
+                const btnHome = document.getElementById('tab-btn-home');
+                const btnFavs = document.getElementById('tab-btn-favs');
+
                 if(tab === 'home') {
-                    document.getElementById('nav-home').className = "text-marDark border-b-2 border-marDark pb-1 px-1 transition-all";
-                    document.getElementById('nav-favs').className = "text-slate-500 hover:text-fomoCoral pb-1 px-1 transition-all flex items-center gap-1";
+                    btnHome.className = "flex flex-col items-center justify-center w-1/2 h-full text-marDark font-black transition-all";
+                    btnFavs.className = "flex flex-col items-center justify-center w-1/2 h-full text-slate-400 font-bold hover:text-fomoCoral transition-all";
                 } else {
-                    document.getElementById('nav-home').className = "text-slate-500 hover:text-marDark pb-1 px-1 transition-all";
-                    document.getElementById('nav-favs').className = "text-fomoCoral border-b-2 border-fomoCoral pb-1 px-1 transition-all flex items-center gap-1";
+                    btnHome.className = "flex flex-col items-center justify-center w-1/2 h-full text-slate-400 font-bold hover:text-marDark transition-all";
+                    btnFavs.className = "flex flex-col items-center justify-center w-1/2 h-full text-fomoCoral font-black transition-all";
                     this.renderFavorites();
                 }
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -517,6 +551,7 @@
             clearFilters() {
                 document.getElementById('search-input').value = '';
                 document.getElementById('category-select').value = 'todos';
+                document.getElementById('environment-select').value = 'todos';
                 document.getElementById('filter-wc').checked = false;
                 document.getElementById('filter-piscina').checked = false;
                 document.getElementById('filter-oferta').checked = false;
@@ -530,6 +565,7 @@
 
             filterCampings() {
                 const searchVal = document.getElementById('search-input').value.toLowerCase();
+                const environmentVal = document.getElementById('environment-select').value;
                 const checkWc = document.getElementById('filter-wc').checked;
                 const checkPiscina = document.getElementById('filter-piscina').checked;
                 const checkOferta = document.getElementById('filter-oferta').checked;
@@ -544,6 +580,11 @@
                         matchesType = camp.tipos[this.currentTypeFilter] && camp.tipos[this.currentTypeFilter].disponible;
                     }
 
+                    let matchesEnvironment = true;
+                    if(environmentVal !== 'todos') {
+                        matchesEnvironment = camp.entorno === environmentVal;
+                    }
+
                     const matchesWc = !checkWc || camp.servicios.includes('wc');
                     const matchesPiscina = !checkPiscina || camp.servicios.includes('piscina');
                     const matchesMascotas = !checkMascotas || camp.servicios.includes('mascotas');
@@ -554,7 +595,7 @@
                         matchesOferta = Object.values(camp.tipos).some(t => t.oferta === true);
                     }
 
-                    return matchesText && matchesType && matchesWc && matchesPiscina && matchesOferta && matchesMascotas && matchesNinos;
+                    return matchesText && matchesType && matchesEnvironment && matchesWc && matchesPiscina && matchesOferta && matchesMascotas && matchesNinos;
                 });
 
                 this.renderGrid();
@@ -573,14 +614,13 @@
                         <div class="p-2">
                             <h4 class="font-bold text-slate-800 text-xs truncate">${camp.nombre}</h4>
                             <p class="text-[10px] text-slate-500 flex items-center gap-1">
-                                <i class="fa-solid fa-star text-amber-400"></i> ${camp.valoracion}
+                                <i class="fa-solid fa-star text-amber-400"></i> ${camp.valoracion} <span class="text-slate-400 font-normal">(${camp.entorno === 'playa' ? '🏖️ Playa' : '⛰️ Montaña'})</span>
                             </p>
                         </div>
                     </div>
                 `).join('');
             }
 
-            // CARGA TÁCTIL MÓVIL
             handleTouchStart(e) {
                 this.touchStartX = e.touches[0].clientX;
             }
@@ -588,7 +628,7 @@
             handleTouchEnd(e, id) {
                 const touchEndX = e.changedTouches[0].clientX;
                 const diff = this.touchStartX - touchEndX;
-                if (Math.abs(diff) > 40) { // Umbral mínimo de swipe
+                if (Math.abs(diff) > 40) {
                     if (diff > 0) {
                         this.nextImage(id);
                     } else {
@@ -604,18 +644,26 @@
                 if (!this.carouselStates[camp.id]) this.carouselStates[camp.id] = 0;
                 const activeImgIdx = this.carouselStates[camp.id];
 
-                // Fila única y súper compacta para tipos y precios
-                let pricesHTML = '<div class="flex gap-1.5 overflow-x-auto py-1">';
+                let pricesHTML = '<div class="grid grid-cols-1 gap-1.5 bg-slate-50 p-2 rounded-xl border border-slate-100">';
                 Object.keys(camp.tipos).forEach(tipoKey => {
                     const tData = camp.tipos[tipoKey];
                     if(tData.disponible) {
-                        let finalPriceHTML = `<span class="font-bold text-slate-700 text-[11px]">${tData.precio}€</span>`;
+                        let finalPriceHTML = `<div class="flex items-center gap-1"><span class="font-bold text-slate-800 text-xs">${tData.precio}€</span></div>`;
                         if(tData.oferta) {
-                            finalPriceHTML = `<span class="font-extrabold text-emerald-500 text-[11px]">${tData.precio_oferta}€</span>`;
+                            const descuento = Math.round(((tData.precio - tData.precio_oferta) / tData.precio) * 100);
+                            finalPriceHTML = `
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    <span class="line-through text-slate-400 text-[11px]">${tData.precio}€</span>
+                                    <span class="font-extrabold text-emerald-500 text-xs">${tData.precio_oferta}€</span>
+                                    <span class="bg-emerald-100 text-emerald-700 font-bold text-[9px] px-1 rounded">-${descuento}%</span>
+                                </div>
+                            `;
                         }
                         pricesHTML += `
-                            <div class="flex items-center gap-1 bg-slate-50 px-2 py-1 rounded-lg border border-slate-100 flex-shrink-0 text-[10px]">
-                                <span class="text-slate-500 font-medium">${tipoKey === 'cabana' ? '🪵' : tipoKey === 'bungalow' ? '🏡' : '🔲'}</span>
+                            <div class="flex items-center justify-between text-xs py-0.5 border-b border-slate-200/50 last:border-0">
+                                <span class="text-slate-600 font-medium capitalize flex items-center gap-1">
+                                    ${tipoKey === 'cabana' ? '🪵' : tipoKey === 'bungalow' ? '🏡' : '🔲'} ${tipoKey}s
+                                </span>
                                 ${finalPriceHTML}
                             </div>
                         `;
@@ -623,34 +671,106 @@
                 });
                 pricesHTML += '</div>';
 
-                const servicesListHTML = camp.servicios.map(s => {
-                    let icon = '⛺';
-                    if (s === 'wc') icon = '🚾 Baño';
-                    if (s === 'piscina') icon = '🏊 Piscina';
-                    if (s === 'wifi') icon = '📶 Wifi';
-                    if (s === 'mascotas') icon = '🐾 Mascotas';
-                    if (s === 'ninos') icon = '👶 Niños';
-                    return `<span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-semibold text-[9px] flex items-center gap-1">${icon}</span>`;
-                }).join('');
+                const todosLosServicios = ['piscina', 'mascotas', 'wc', 'wifi', 'ninos'];
+                let serviciosTableHTML = `
+                    <div class="mt-2 border border-slate-100 rounded-xl overflow-hidden shadow-2xs">
+                        <div class="bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-600 tracking-wider uppercase">Estado de Servicios</div>
+                        <table class="w-full text-left text-[11px] bg-white">
+                            <tbody>
+                `;
+                
+                todosLosServicios.forEach((serv, idx) => {
+                    const tieneServicio = camp.servicios.includes(serv);
+                    let label = '';
+                    if (serv === 'wc') label = '🚾 Baños Premium';
+                    if (serv === 'piscina') label = '🏊 Piscina Cuidada';
+                    if (serv === 'wifi') label = '📶 Conexión WiFi';
+                    if (serv === 'mascotas') label = '🐾 Admiten Mascotas';
+                    if (serv === 'ninos') label = '👶 Espacio Niños';
+
+                    const checkElement = tieneServicio 
+                        ? `<span class="text-emerald-500 font-bold flex items-center gap-1"><i class="fa-solid fa-circle-check text-xs"></i> Sí</span>`
+                        : `<span class="text-slate-300 font-medium flex items-center gap-1"><i class="fa-solid fa-circle-xmark text-xs"></i> No</span>`;
+
+                    if (idx % 2 === 0) serviciosTableHTML += `<tr>`;
+                    serviciosTableHTML += `
+                        <td class="p-2 border-b border-slate-100 ${idx % 2 === 0 ? 'border-r' : ''} w-1/2">
+                            <div class="flex justify-between items-center gap-1">
+                                <span class="text-slate-600">${label}</span>
+                                ${checkElement}
+                            </div>
+                        </td>
+                    `;
+                    if (idx % 2 === 1 || idx === todosLosServicios.length - 1) serviciosTableHTML += `</tr>`;
+                });
+                serviciosTableHTML += `</tbody></table></div>`;
+
+                let caracteristicasTableHTML = `
+                    <div class="mt-2 border border-slate-100 rounded-xl overflow-hidden shadow-2xs">
+                        <div class="bg-slate-100 px-2 py-1 text-[10px] font-bold text-slate-600 tracking-wider uppercase flex justify-between items-center">
+                            <span>Instalaciones y Entorno</span>
+                            <span class="text-[9px] bg-marDark text-white px-1.5 py-0.2 rounded-md font-bold uppercase">${camp.entorno === 'playa' ? '🏖️ Costa' : '⛰️ Interior'}</span>
+                        </div>
+                        <table class="w-full text-left text-[11px] bg-white">
+                            <tbody>
+                `;
+
+                const keysCaract = Object.keys(camp.caracteristicas);
+                keysCaract.forEach((key, idx) => {
+                    const tieneC = camp.caracteristicas[key];
+                    let label = '';
+                    if(key === 'bar') label = '🍺 Servicio de Bar';
+                    if(key === 'tienda') label = '🛒 Tienda / Súper';
+                    if(key === 'parque') label = '🛝 Parque Infantil';
+                    if(key === 'canchas') label = '⚽ Canchas Deporte';
+                    if(key === 'animacion') label = '🎉 Animación Verano';
+
+                    const checkElement = tieneC 
+                        ? `<span class="text-emerald-500 font-bold flex items-center gap-1"><i class="fa-solid fa-circle-check text-xs"></i> Sí</span>`
+                        : `<span class="text-slate-300 font-medium flex items-center gap-1"><i class="fa-solid fa-circle-xmark text-xs"></i> No</span>`;
+
+                    if (idx % 2 === 0) caracteristicasTableHTML += `<tr>`;
+                    caracteristicasTableHTML += `
+                        <td class="p-2 border-b border-slate-100 ${idx % 2 === 0 ? 'border-r' : ''} w-1/2">
+                            <div class="flex justify-between items-center gap-1">
+                                <span class="text-slate-600">${label}</span>
+                                ${checkElement}
+                            </div>
+                        </td>
+                    `;
+                    if (idx % 2 === 1 || idx === keysCaract.length - 1) caracteristicasTableHTML += `</tr>`;
+                });
+
+                caracteristicasTableHTML += `
+                    <tr>
+                        <td colspan="2" class="p-2 bg-slate-50/50 text-[11px] font-medium text-slate-700 border-t border-slate-100">
+                            <div class="flex items-center gap-1.5 text-slate-600">
+                                ${camp.entorno === 'playa' ? '<i class="fa-solid fa-umbrella-beach text-sky-500"></i>' : '<i class="fa-solid fa-mountain text-amber-600"></i>'}
+                                <span><strong>Localización:</strong> ${camp.distancia}</span>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                caracteristicasTableHTML += `</tbody></table></div>`;
 
                 return `
                     <div class="bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col lazy-card" id="card-${camp.id}">
-                        <div class="relative h-44 w-full overflow-hidden group" 
-                             touchstart="app.handleTouchStart(event)" 
-                             touchend="app.handleTouchEnd(event, '${camp.id}')">
-                            <img src="${camp.imagenes[activeImgIdx]}" id="img-render-${camp.id}" class="w-full h-full object-cover transition-all duration-500" alt="${camp.nombre}">
+                        <div class="relative h-52 w-full overflow-hidden group" 
+                             ontouchstart="app.handleTouchStart(event)" 
+                             ontouchend="app.handleTouchEnd(event, '${camp.id}')">
+                            <img src="${camp.imagenes[activeImgIdx]}" id="img-render-${camp.id}" class="w-full h-full object-cover transition-all duration-500 select-none" alt="${camp.nombre}">
                             
-                            <button onclick="event.stopPropagation(); app.toggleFavorite('${camp.id}')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/90 flex items-center justify-center shadow-md active:scale-90 transition-all z-20">
+                            <button onclick="event.stopPropagation(); app.toggleFavorite('${camp.id}')" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 flex items-center justify-center shadow-md active:scale-90 transition-all z-20">
                                 <i class="${isFav ? 'fa-solid text-fomoCoral' : 'fa-regular text-slate-400'} fa-heart text-xs"></i>
                             </button>
 
-                            <button onclick="event.stopPropagation(); app.prevImage('${camp.id}')" class="absolute left-1 top-1/2 -mt-3 w-6 h-6 rounded-full bg-white/70 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-left"></i></button>
-                            <button onclick="event.stopPropagation(); app.nextImage('${camp.id}')" class="absolute right-1 top-1/2 -mt-3 w-6 h-6 rounded-full bg-white/70 flex items-center justify-center text-[10px] opacity-0 group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-right"></i></button>
+                            <button onclick="event.stopPropagation(); app.prevImage('${camp.id}')" class="absolute left-2 top-1/2 -mt-4 w-7 h-7 rounded-full bg-white/80 flex items-center justify-center text-xs opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-left"></i></button>
+                            <button onclick="event.stopPropagation(); app.nextImage('${camp.id}')" class="absolute right-2 top-1/2 -mt-4 w-7 h-7 rounded-full bg-white/80 flex items-center justify-center text-xs opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all shadow-sm z-20"><i class="fa-solid fa-chevron-right"></i></button>
                             
-                            <span class="absolute bottom-2 right-2 bg-black/50 backdrop-blur-sm text-white text-[9px] px-1.5 py-0.5 rounded font-medium z-20">${activeImgIdx + 1}/5</span>
+                            <span class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-0.5 rounded-full font-bold tracking-wider z-20">${activeImgIdx + 1} / ${camp.imagenes.length}</span>
                         </div>
 
-                        <div class="p-3 flex-1 flex flex-col space-y-2">
+                        <div class="p-3 flex-1 flex flex-col space-y-2.5">
                             <div>
                                 <div class="flex items-start justify-between gap-1 mb-0.5">
                                     <h3 class="font-extrabold text-slate-800 text-sm leading-snug truncate">${camp.nombre}</h3>
@@ -665,22 +785,23 @@
 
                             <p class="text-[11px] text-slate-500 leading-normal line-clamp-2">${camp.desc_corta}</p>
 
-                            <div class="bg-fomoCoral/10 px-2 py-1 rounded-lg flex items-center gap-1 text-fomoCoral font-bold text-[10px]">
-                                <i class="fa-solid fa-fire text-[9px]"></i>
-                                <span>${fomoPeople} guardados hoy.</span>
+                            <div class="bg-fomoCoral/10 px-2.5 py-1.5 rounded-xl flex items-center gap-1.5 text-fomoCoral font-bold text-[11px] shadow-2xs">
+                                <i class="fa-solid fa-heart-pulse text-[10px]"></i>
+                                <span>${fomoPeople} usuarios lo añadieron a sus favoritos hoy.</span>
                             </div>
 
                             ${pricesHTML}
 
                             <div id="details-${camp.id}" class="details-content">
-                                <div class="pt-1.5 pb-2 space-y-1.5 border-t border-slate-100 mt-1">
-                                    <p class="text-[10px] text-slate-500 leading-relaxed">${camp.desc_larga}</p>
-                                    <div class="flex flex-wrap gap-1">${servicesListHTML}</div>
+                                <div class="pt-1 pb-1 border-t border-slate-100 mt-1 space-y-1">
+                                    <p class="text-[11px] text-slate-500 leading-relaxed bg-slate-50 p-2 rounded-lg mb-1">${camp.desc_larga}</p>
+                                    ${serviciosTableHTML}
+                                    ${caracteristicasTableHTML}
                                 </div>
                             </div>
 
-                            <button onclick="app.toggleDetails('${camp.id}')" id="btn-toggle-${camp.id}" class="w-full text-center text-[10px] font-bold text-slate-400 hover:text-slate-600 transition-all flex items-center justify-center gap-1">
-                                Ver más <i class="fa-solid fa-chevron-down text-[8px]"></i>
+                            <button onclick="app.toggleDetails('${camp.id}')" id="btn-toggle-${camp.id}" class="w-full text-center text-[10px] font-black text-slate-400 hover:text-slate-600 transition-all uppercase tracking-wider flex items-center justify-center gap-1 py-1 bg-slate-50 rounded-lg hover:bg-slate-100">
+                                Ver más detalles <i class="fa-solid fa-chevron-down text-[8px]"></i>
                             </button>
 
                             <div class="pt-1 grid grid-cols-2 gap-1.5">
@@ -710,7 +831,7 @@
                 document.getElementById('results-count').innerText = `${this.filteredCampings.length} campings`;
                 
                 if (this.filteredCampings.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-medium text-xs">No hay campings que coincidan con los filtros 🏖️</div>`;
+                    grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400 font-medium text-xs">No hay campings que coincidan con los filtros o entorno seleccionado 🏖️</div>`;
                     document.getElementById('lazy-load-container').classList.add('hidden');
                     return;
                 }
@@ -775,14 +896,14 @@
                 const camp = this.campings.find(c => c.id === id);
                 this.carouselStates[id] = (this.carouselStates[id] + 1) % camp.imagenes.length;
                 document.getElementById(`img-render-${id}`).src = camp.imagenes[this.carouselStates[id]];
-                document.querySelector(`#card-${id} span.bottom-2`).innerText = `${this.carouselStates[id] + 1}/5`;
+                document.querySelector(`#card-${id} span.bottom-2`).innerText = `${this.carouselStates[id] + 1} / ${camp.imagenes.length}`;
             }
 
             prevImage(id) {
                 const camp = this.campings.find(c => c.id === id);
                 this.carouselStates[id] = (this.carouselStates[id] - 1 + camp.imagenes.length) % camp.imagenes.length;
                 document.getElementById(`img-render-${id}`).src = camp.imagenes[this.carouselStates[id]];
-                document.querySelector(`#card-${id} span.bottom-2`).innerText = `${this.carouselStates[id] + 1}/5`;
+                document.querySelector(`#card-${id} span.bottom-2`).innerText = `${this.carouselStates[id] + 1} / ${camp.imagenes.length}`;
             }
 
             toggleDetails(id) {
@@ -792,8 +913,8 @@
                 
                 element.classList.toggle('open', isOpening);
                 btn.innerHTML = isOpening 
-                    ? `Ocultar <i class="fa-solid fa-chevron-up text-[8px]"></i>` 
-                    : `Ver más <i class="fa-solid fa-chevron-down text-[8px]"></i>`;
+                    ? `Ocultar detalles <i class="fa-solid fa-chevron-up text-[8px]"></i>` 
+                    : `Ver más detalles <i class="fa-solid fa-chevron-down text-[8px]"></i>`;
             }
 
             openMaps(nombre, coordenadas) {
@@ -803,7 +924,6 @@
                     <iframe class="w-full h-full border-none" src="https://maps.google.com/maps?q=${coordenadas}&z=14&output=embed" allowfullscreen="" loading="lazy"></iframe>
                 `;
                 
-                // Configurar acciones extendidas del modal de mapas
                 document.getElementById('btn-copy-coords').onclick = () => {
                     navigator.clipboard.writeText(coordenadas).then(() => {
                         alert("¡Coordenadas copiadas al portapapeles! 📋 (" + coordenadas + ")");
